@@ -91,18 +91,65 @@
                     }
                 }
             }
+        },
+        "/films/{id}": {
+            "get": {
+                "description": "Get a film with the given ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Film"
+                ],
+                "summary": "Get a film",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "filmId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Film"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a film with the given ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Film"
+                ],
+                "summary": "Delete a film",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "filmId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Film deleted successfully"
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "entity.Actor": {
             "type": "object",
             "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
                 "firstName": {
                     "type": "string"
                 },
@@ -112,20 +159,52 @@
                 "lastName": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "lastUpdate": {
                     "type": "string"
                 }
             }
         },
-        "gorm.DeletedAt": {
+        "entity.Film": {
             "type": "object",
             "properties": {
-                "time": {
+                "description": {
                     "type": "string"
                 },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
+                "id": {
+                    "type": "integer"
+                },
+                "languageId": {
+                    "type": "integer"
+                },
+                "lastUpdate": {
+                    "type": "string"
+                },
+                "length": {
+                    "type": "integer"
+                },
+                "originalLanguageId": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "string"
+                },
+                "releaseYear": {
+                    "type": "integer"
+                },
+                "rentalDuration": {
+                    "type": "integer"
+                },
+                "rentalRate": {
+                    "type": "number"
+                },
+                "replacementCost": {
+                    "type": "number"
+                },
+                "special_features": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },

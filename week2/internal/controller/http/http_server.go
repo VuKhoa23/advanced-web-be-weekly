@@ -13,10 +13,11 @@ import (
 
 type Server struct {
 	actorHandler *v1.ActorHandler
+	filmHandler  *v1.FilmHandler
 }
 
-func NewServer(actorHandler *v1.ActorHandler) *Server {
-	return &Server{actorHandler: actorHandler}
+func NewServer(actorHandler *v1.ActorHandler, filmHandler *v1.FilmHandler) *Server {
+	return &Server{actorHandler: actorHandler, filmHandler: filmHandler}
 }
 
 func (s *Server) Run() {
@@ -27,7 +28,7 @@ func (s *Server) Run() {
 		Handler: router,
 	}
 
-	v1.MapRoutes(router, s.actorHandler)
+	v1.MapRoutes(router, s.actorHandler, s.filmHandler)
 	err := httpServerInstance.ListenAndServe()
 	if err != nil {
 		return

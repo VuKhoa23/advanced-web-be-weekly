@@ -24,15 +24,15 @@ var serverSet = wire.NewSet(
 
 // handler === controller | with service and repository layers to form 3 layers architecture
 var handlerSet = wire.NewSet(
-	v1.NewActorHandler,
+	v1.NewActorHandler, v1.NewFilmHandler,
 )
 
 var serviceSet = wire.NewSet(
-	serviceimplement.NewActorService,
+	serviceimplement.NewActorService, serviceimplement.NewFilmService,
 )
 
 var repositorySet = wire.NewSet(
-	repositoryimplement.NewActorRepository,
+	repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository,
 )
 
 func InitializeContainer(

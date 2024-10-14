@@ -2,26 +2,43 @@ basePath: /api/v1
 definitions:
   entity.Actor:
     properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
       firstName:
         type: string
       id:
         type: integer
       lastName:
         type: string
-      updatedAt:
+      lastUpdate:
         type: string
     type: object
-  gorm.DeletedAt:
+  entity.Film:
     properties:
-      time:
+      description:
         type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
+      id:
+        type: integer
+      languageId:
+        type: integer
+      lastUpdate:
+        type: string
+      length:
+        type: integer
+      originalLanguageId:
+        type: integer
+      rating:
+        type: string
+      releaseYear:
+        type: integer
+      rentalDuration:
+        type: integer
+      rentalRate:
+        type: number
+      replacementCost:
+        type: number
+      special_features:
+        type: string
+      title:
+        type: string
     type: object
   model.ActorRequest:
     properties:
@@ -94,4 +111,39 @@ paths:
       summary: Get an actor
       tags:
       - Actor
+  /films/{id}:
+    delete:
+      description: Delete a film with the given ID
+      parameters:
+      - description: filmId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Film deleted successfully
+      summary: Delete a film
+      tags:
+      - Film
+    get:
+      description: Get a film with the given ID
+      parameters:
+      - description: filmId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Film'
+      summary: Get a film
+      tags:
+      - Film
 swagger: "2.0"
