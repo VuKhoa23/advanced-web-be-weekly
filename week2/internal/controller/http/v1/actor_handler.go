@@ -66,7 +66,7 @@ func (handler *ActorHandler) Get(c *gin.Context) {
 func (handler *ActorHandler) Create(c *gin.Context) {
 	var actorRequest model.ActorRequest
 
-	if err := c.ShouldBind(&actorRequest); err != nil {
+	if err := c.ShouldBindJSON(&actorRequest); err != nil {
 		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: err.Error(), Data: nil})
 		return
 	}
