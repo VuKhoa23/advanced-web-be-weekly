@@ -28,19 +28,28 @@ func (repo *FilmRepository) GetFilmByID(ctx context.Context, id int64) (*entity.
 
 func (repo *FilmRepository) DeleteFilm(ctx context.Context, id int64) error {
 	return repo.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// Check if the film exists before proceeding
+		var filmExists bool
+		if err := tx.Raw(`
+            SELECT EXISTS(SELECT 1 FROM film WHERE film_id = ?)`, id).Scan(&filmExists).Error; err != nil {
+			return err
+		}
+
+		if !filmExists {
+			return gorm.ErrRecordNotFound
+		}
+
 		// Delete from film_actor
 		if err := tx.Exec(`
             DELETE fa FROM film_actor fa
-            JOIN film f ON f.film_id = fa.film_id
-            WHERE f.film_id = ?`, id).Error; err != nil {
+            WHERE fa.film_id = ?`, id).Error; err != nil {
 			return err
 		}
 
 		// Delete from film_category
 		if err := tx.Exec(`
             DELETE fc FROM film_category fc
-            JOIN film f ON f.film_id = fc.film_id
-            WHERE f.film_id = ?`, id).Error; err != nil {
+            WHERE fc.film_id = ?`, id).Error; err != nil {
 			return err
 		}
 
@@ -66,8 +75,7 @@ func (repo *FilmRepository) DeleteFilm(ctx context.Context, id int64) error {
 		// Delete from inventory
 		if err := tx.Exec(`
             DELETE i FROM inventory i
-            JOIN film f ON f.film_id = i.film_id
-            WHERE f.film_id = ?`, id).Error; err != nil {
+            WHERE i.film_id = ?`, id).Error; err != nil {
 			return err
 		}
 
