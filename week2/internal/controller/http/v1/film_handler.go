@@ -64,7 +64,7 @@ func (handler *FilmHandler) Delete(c *gin.Context) {
 	err = handler.filmService.DeleteFilm(c.Request.Context(), parsedId)
 	if err != nil {
 		if err.Error() == "record not found" {
-			c.JSON(http.StatusNotFound, model.HttpResponse[any]{Message: "Film not found", Data: nil})
+			c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: "Film not found", Data: nil})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: "Internal server error", Data: nil})
