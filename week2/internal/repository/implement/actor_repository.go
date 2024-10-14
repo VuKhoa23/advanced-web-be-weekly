@@ -41,3 +41,15 @@ func (repo *ActorRepository) CreateActor(ctx context.Context, actor *entity.Acto
 	}
 	return nil
 }
+
+func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Actor) error {
+	//update all columns of an actor
+	if err := repo.db.WithContext(ctx).Where("actor_id = ?", actor.ID).Save(actor).Error; err != nil {
+		//maybe dont need
+		//if errors.Is(err, gorm.ErrRecordNotFound) {
+		//	return nil, err
+		//}
+		return err
+	}
+	return nil
+}

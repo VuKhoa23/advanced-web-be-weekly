@@ -30,3 +30,7 @@ func (service *ActorService) CreateActor(ctx context.Context, actor *entity.Acto
 	}
 	return nil
 }
+
+func (service *ActorService) UpdateActor(ctx context.Context, actor *entity.Actor) error {
+	return service.actorRepository.UpdateActor(ctx, actor)
+}

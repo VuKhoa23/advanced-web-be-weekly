@@ -9,4 +9,5 @@ type ActorService interface {
 	GetAllActor(ctx context.Context) []entity.Actor
 	GetActorById(ctx context.Context, id int64) (*entity.Actor, error)
 	CreateActor(ctx context.Context, actor *entity.Actor) error
+	UpdateActor(ctx context.Context, actor *entity.Actor) error
 }

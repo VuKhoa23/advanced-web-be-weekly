@@ -111,6 +111,27 @@ paths:
       summary: Get an actor
       tags:
       - Actor
+    put:
+      consumes:
+      - application/json
+      description: Update an actor
+      parameters:
+      - description: Actor payload
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.ActorRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Actor'
+      summary: Update an actor
+      tags:
+      - Actor
   /films/{id}:
     delete:
       description: Delete a film with the given ID

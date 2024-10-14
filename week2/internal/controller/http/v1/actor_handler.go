@@ -79,3 +79,36 @@ func (handler *ActorHandler) Create(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, model.HttpResponse[entity.Actor]{Message: "Success", Data: actor})
 }
+
+// @Summary Update an actor
+// @Description Update an actor
+// @Tags Actor
+// @Accept json
+// @Param  params body model.ActorRequest true "Actor payload"
+// @Produce  json
+// @Router /actors/{id} [put]
+// @Success 200 {object} entity.Actor
+func (handler *ActorHandler) Update(c *gin.Context) {
+	//check param id
+	id := c.Param("id")
+	parsedId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: err.Error(), Data: nil})
+	}
+
+	var actorRequest model.ActorRequest
+	//binding request
+	if err1 := c.ShouldBindJSON(&actorRequest); err1 != nil {
+		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: err1.Error(), Data: nil})
+		return
+	}
+	//update
+	updatedActor := &entity.Actor{ID: parsedId, FirstName: actorRequest.FirstName, LastName: actorRequest.LastName}
+	err2 := handler.actorService.UpdateActor(c.Request.Context(), updatedActor)
+	if err2 != nil {
+		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: err2.Error(), Data: nil})
+		return
+	}
+	c.JSON(http.StatusOK, model.HttpResponse[entity.Actor]{Message: "Success", Data: updatedActor})
+}
