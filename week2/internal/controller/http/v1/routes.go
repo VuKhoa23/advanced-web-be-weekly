@@ -15,6 +15,7 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 			actors.GET("/", actorHandler.GetAll)
 			actors.GET("/:id", actorHandler.Get)
 			actors.PUT("/:id", actorHandler.Update)
+			actors.DELETE("/:id", actorHandler.Delete)
 		}
 
 		films := v1.Group("/films")

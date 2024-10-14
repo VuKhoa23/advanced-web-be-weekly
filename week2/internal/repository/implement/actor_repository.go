@@ -53,3 +53,26 @@ func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Acto
 	}
 	return nil
 }
+
+func (repo *ActorRepository) DeleteActor(ctx context.Context, id int64) error {
+	return repo.db.Transaction(func(tx *gorm.DB) error {
+		//check actor exists
+		var actor entity.Actor
+		if err := tx.WithContext(ctx).First(&actor, id).Error; err != nil {
+			return err
+		}
+
+		// Delete from film_actor
+		if err := tx.Exec(`
+            DELETE fa FROM film_actor fa
+            WHERE fa.actor_id = ?`, id).Error; err != nil {
+			return err
+		}
+
+		//Delete actor
+		if err := tx.Delete(&actor).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}

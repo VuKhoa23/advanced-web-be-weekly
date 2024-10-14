@@ -10,4 +10,5 @@ type ActorRepository interface {
 	GetActorByID(c context.Context, id int64) (*entity.Actor, error)
 	CreateActor(c context.Context, actor *entity.Actor) error
 	UpdateActor(c context.Context, actor *entity.Actor) error
+	DeleteActor(c context.Context, id int64) error
 }

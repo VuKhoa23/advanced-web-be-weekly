@@ -112,13 +112,11 @@ const docTemplate = `{
                 "summary": "Update an actor",
                 "parameters": [
                     {
-                        "description": "Actor payload",
-                        "name": "params",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.ActorRequest"
-                        }
+                        "type": "integer",
+                        "description": "actorId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -127,6 +125,30 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/entity.Actor"
                         }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an actor with the given ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actor"
+                ],
+                "summary": "Delete an actor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "actorId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Actor deleted successfully"
                     }
                 }
             }

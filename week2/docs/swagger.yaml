@@ -93,6 +93,22 @@ paths:
       tags:
       - Actor
   /actors/{id}:
+    delete:
+      description: Delete an actor with the given ID
+      parameters:
+      - description: actorId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Actor deleted successfully
+      summary: Delete an actor
+      tags:
+      - Actor
     get:
       description: Get an actor
       parameters:
@@ -116,12 +132,11 @@ paths:
       - application/json
       description: Update an actor
       parameters:
-      - description: Actor payload
-        in: body
-        name: params
+      - description: actorId
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/model.ActorRequest'
+        type: integer
       produces:
       - application/json
       responses:

@@ -34,3 +34,7 @@ func (service *ActorService) CreateActor(ctx context.Context, actor *entity.Acto
 func (service *ActorService) UpdateActor(ctx context.Context, actor *entity.Actor) error {
 	return service.actorRepository.UpdateActor(ctx, actor)
 }
+
+func (service *ActorService) DeleteActor(ctx context.Context, id int64) error {
+	return service.actorRepository.DeleteActor(ctx, id)
+}
