@@ -90,6 +90,29 @@ func (repo *FilmRepository) DeleteFilm(ctx context.Context, id int64) error {
 	})
 }
 
+func (repo *FilmRepository) CreateFilm(ctx context.Context, film *entity.Film) error {
+	err := repo.db.WithContext(ctx).Create(film).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *FilmRepository) UpdateFilm(ctx context.Context, film *entity.Film, filmId int64) (*entity.Film, error) {
+	// update film
+	result := repo.db.WithContext(ctx).Model(&entity.Film{ID: filmId}).Updates(&film)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var updatedFilm entity.Film
+	err := repo.db.WithContext(ctx).First(&updatedFilm, filmId).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedFilm, nil
+}
 func (repo *FilmRepository) GetAllFilms(ctx context.Context) []entity.Film {
 	var films []entity.Film
 	result := repo.db.WithContext(ctx).Find(&films)
