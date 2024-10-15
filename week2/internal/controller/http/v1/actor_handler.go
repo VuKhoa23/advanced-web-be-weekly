@@ -100,15 +100,15 @@ func (handler *ActorHandler) Update(c *gin.Context) {
 
 	var actorRequest model.ActorRequest
 	//binding request
-	if err1 := c.ShouldBindJSON(&actorRequest); err1 != nil {
-		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: err1.Error(), Data: nil})
+	if err = c.ShouldBindJSON(&actorRequest); err != nil {
+		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: err.Error(), Data: nil})
 		return
 	}
 	//update
 	updatedActor := &entity.Actor{ID: parsedId, FirstName: actorRequest.FirstName, LastName: actorRequest.LastName}
-	err2 := handler.actorService.UpdateActor(c.Request.Context(), updatedActor)
-	if err2 != nil {
-		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: err2.Error(), Data: nil})
+	err = handler.actorService.UpdateActor(c.Request.Context(), updatedActor)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: err.Error(), Data: nil})
 		return
 	}
 	c.JSON(http.StatusOK, model.HttpResponse[entity.Actor]{Message: "Success", Data: updatedActor})
