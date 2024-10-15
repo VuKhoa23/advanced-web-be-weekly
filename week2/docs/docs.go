@@ -29,10 +29,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/entity.Actor"
-                            }
+                            "$ref": "#/definitions/model.HttpResponse-array_entity_Actor"
                         }
                     }
                 }
@@ -64,7 +61,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Actor"
+                            "$ref": "#/definitions/model.HttpResponse-entity_Actor"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
                         }
                     }
                 }
@@ -94,7 +103,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Actor"
+                            "$ref": "#/definitions/model.HttpResponse-entity_Actor"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
                         }
                     }
                 }
@@ -134,7 +155,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Actor"
+                            "$ref": "#/definitions/model.HttpResponse-entity_Actor"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
                         }
                     }
                 }
@@ -161,6 +194,18 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "Actor deleted successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
                     }
                 }
             }
@@ -179,10 +224,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/entity.Film"
-                            }
+                            "$ref": "#/definitions/model.HttpResponse-array_entity_Film"
                         }
                     }
                 }
@@ -201,8 +243,16 @@ const docTemplate = `{
                 "summary": "Update a film",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "filmId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Film payload",
-                        "name": "params",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -214,7 +264,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Film"
+                            "$ref": "#/definitions/model.HttpResponse-entity_Film"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
                         }
                     }
                 }
@@ -234,7 +296,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Film payload",
-                        "name": "params",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -243,10 +305,22 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Film"
+                            "$ref": "#/definitions/model.HttpResponse-entity_Film"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
                         }
                     }
                 }
@@ -265,6 +339,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "filmId",
                         "name": "id",
                         "in": "path",
@@ -275,7 +350,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Film"
+                            "$ref": "#/definitions/model.HttpResponse-entity_Film"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
                         }
                     }
                 }
@@ -292,6 +379,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "filmId",
                         "name": "id",
                         "in": "path",
@@ -301,6 +389,18 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "Film deleted successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse-any"
+                        }
                     }
                 }
             }
@@ -444,6 +544,65 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "maxLength": 255
+                }
+            }
+        },
+        "model.HttpResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.HttpResponse-array_entity_Actor": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Actor"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.HttpResponse-array_entity_Film": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Film"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.HttpResponse-entity_Actor": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/entity.Actor"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.HttpResponse-entity_Film": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/entity.Film"
+                },
+                "message": {
+                    "type": "string"
                 }
             }
         }
