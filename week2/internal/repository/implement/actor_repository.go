@@ -42,16 +42,17 @@ func (repo *ActorRepository) CreateActor(ctx context.Context, actor *entity.Acto
 	return nil
 }
 
-func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Actor) error {
+func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Actor, filmId int64) (*entity.Actor, error) {
 	//update all columns of an actor
-	if err := repo.db.WithContext(ctx).Where("actor_id = ?", actor.ID).Save(actor).Error; err != nil {
-		//maybe dont need
-		//if errors.Is(err, gorm.ErrRecordNotFound) {
-		//	return nil, err
-		//}
-		return err
+	if err := repo.db.WithContext(ctx).Model(&entity.Actor{ID: filmId}).Updates(&actor).Error; err != nil {
+		return nil, err
 	}
-	return nil
+
+	var updatedActor entity.Actor
+	if err := repo.db.WithContext(ctx).First(&updatedActor, filmId).Error; err != nil {
+		return nil, err
+	}
+	return &updatedActor, nil
 }
 
 func (repo *ActorRepository) DeleteActor(ctx context.Context, id int64) error {

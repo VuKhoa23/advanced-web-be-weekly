@@ -32,7 +32,7 @@ func (handler *ActorHandler) GetAll(c *gin.Context) {
 // @Description Get an actor
 // @Tags Actor
 // @Produce  json
-// @Param id path int true "actorId"
+// @Param id path int true "actorId" example(1)
 // @Router /actors/{id} [get]
 // @Success 200 {object} entity.Actor
 func (handler *ActorHandler) Get(c *gin.Context) {
@@ -59,7 +59,7 @@ func (handler *ActorHandler) Get(c *gin.Context) {
 // @Description Create an actor
 // @Tags Actor
 // @Accept json
-// @Param  params body model.ActorRequest true "Actor payload"
+// @Param params body model.ActorRequest true "Actor payload"
 // @Produce  json
 // @Router /actors [post]
 // @Success 200 {object} entity.Actor
@@ -71,8 +71,7 @@ func (handler *ActorHandler) Create(c *gin.Context) {
 		return
 	}
 
-	actor := &entity.Actor{FirstName: actorRequest.FirstName, LastName: actorRequest.LastName}
-	err := handler.actorService.CreateActor(c.Request.Context(), actor)
+	actor, err := handler.actorService.CreateActor(c.Request.Context(), actorRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: err.Error(), Data: nil})
 		return
@@ -84,18 +83,23 @@ func (handler *ActorHandler) Create(c *gin.Context) {
 // @Description Update an actor
 // @Tags Actor
 // @Accept json
-// @Param id path int true "actorId"
-// @RequestBody model.ActorRequest true "Actor payload"
+// @Param id path int true "actorId" example(1)
+// @Param request body model.ActorRequest true "Actor payload"
 // @Produce  json
 // @Router /actors/{id} [put]
 // @Success 200 {object} entity.Actor
 func (handler *ActorHandler) Update(c *gin.Context) {
 	//check param id
-	id := c.Param("id")
+	id, exists := c.Params.Get("id")
+	if !exists {
+		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: "id is required", Data: nil})
+		return
+	}
+
 	parsedId, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-
 		c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: err.Error(), Data: nil})
+		return
 	}
 
 	var actorRequest model.ActorRequest
@@ -105,9 +109,12 @@ func (handler *ActorHandler) Update(c *gin.Context) {
 		return
 	}
 	//update
-	updatedActor := &entity.Actor{ID: parsedId, FirstName: actorRequest.FirstName, LastName: actorRequest.LastName}
-	err = handler.actorService.UpdateActor(c.Request.Context(), updatedActor)
+	updatedActor, err := handler.actorService.UpdateActor(c.Request.Context(), actorRequest, parsedId)
 	if err != nil {
+		if err.Error() == "record not found" {
+			c.JSON(http.StatusBadRequest, model.HttpResponse[any]{Message: "Actor not found", Data: nil})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: err.Error(), Data: nil})
 		return
 	}
@@ -118,7 +125,7 @@ func (handler *ActorHandler) Update(c *gin.Context) {
 // @Description Delete an actor with the given ID
 // @Tags Actor
 // @Produce json
-// @Param id path int true "actorId"
+// @Param id path int true "actorId" example(1)
 // @Router /actors/{id} [delete]
 // @Success 204 "Actor deleted successfully"
 func (handler *ActorHandler) Delete(c *gin.Context) {

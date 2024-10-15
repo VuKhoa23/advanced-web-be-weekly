@@ -3,6 +3,7 @@ package serviceimplement
 import (
 	"context"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
+	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/repository"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
 )
@@ -23,16 +24,28 @@ func (service *ActorService) GetActorById(ctx context.Context, id int64) (*entit
 	return service.actorRepository.GetActorByID(ctx, id)
 }
 
-func (service *ActorService) CreateActor(ctx context.Context, actor *entity.Actor) error {
-	result := service.actorRepository.CreateActor(ctx, actor)
-	if result != nil {
-		return result
+func (service *ActorService) CreateActor(ctx context.Context, actorRequest model.ActorRequest) (*entity.Actor, error) {
+	actor := &entity.Actor{
+		FirstName: actorRequest.FirstName,
+		LastName:  actorRequest.LastName,
 	}
-	return nil
+	err := service.actorRepository.CreateActor(ctx, actor)
+	if err != nil {
+		return nil, err
+	}
+	return actor, nil
 }
 
-func (service *ActorService) UpdateActor(ctx context.Context, actor *entity.Actor) error {
-	return service.actorRepository.UpdateActor(ctx, actor)
+func (service *ActorService) UpdateActor(ctx context.Context, actorRequest model.ActorRequest, actorId int64) (*entity.Actor, error) {
+	actor := &entity.Actor{
+		FirstName: actorRequest.FirstName,
+		LastName:  actorRequest.LastName,
+	}
+	updatedActor, err := service.actorRepository.UpdateActor(ctx, actor, actorId)
+	if err != nil {
+		return nil, err
+	}
+	return updatedActor, nil
 }
 
 func (service *ActorService) DeleteActor(ctx context.Context, id int64) error {

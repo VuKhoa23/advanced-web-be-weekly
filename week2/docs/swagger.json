@@ -76,6 +76,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "actorId",
                         "name": "id",
                         "in": "path",
@@ -106,10 +107,20 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "actorId",
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Actor payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ActorRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -133,6 +144,7 @@
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "actorId",
                         "name": "id",
                         "in": "path",

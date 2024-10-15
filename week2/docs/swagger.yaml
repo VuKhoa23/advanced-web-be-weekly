@@ -97,6 +97,7 @@ paths:
       description: Delete an actor with the given ID
       parameters:
       - description: actorId
+        example: 1
         in: path
         name: id
         required: true
@@ -113,6 +114,7 @@ paths:
       description: Get an actor
       parameters:
       - description: actorId
+        example: 1
         in: path
         name: id
         required: true
@@ -133,10 +135,17 @@ paths:
       description: Update an actor
       parameters:
       - description: actorId
+        example: 1
         in: path
         name: id
         required: true
         type: integer
+      - description: Actor payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ActorRequest'
       produces:
       - application/json
       responses:
