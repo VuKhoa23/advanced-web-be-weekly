@@ -138,3 +138,14 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, model.HttpResponse[entity.Film]{Message: "Success", Data: film})
 }
+
+// @Summary Get all films
+// @Description Get all films
+// @Tags Film
+// @Produce  json
+// @Router /films [get]
+// @Success 200 {object} []entity.Film
+func (handler *FilmHandler) GetAll(c *gin.Context) {
+	films := handler.filmService.GetAllFilms(c.Request.Context())
+	c.JSON(http.StatusOK, model.HttpResponse[[]entity.Film]{Message: "Success", Data: &films})
+}

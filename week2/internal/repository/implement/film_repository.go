@@ -2,6 +2,7 @@ package repositoryimplement
 
 import (
 	"context"
+
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	"github.com/VuKhoa23/advanced-web-be/internal/repository"
@@ -111,4 +112,12 @@ func (repo *FilmRepository) UpdateFilm(ctx context.Context, film *entity.Film, f
 	}
 
 	return &updatedFilm, nil
+}
+func (repo *FilmRepository) GetAllFilms(ctx context.Context) []entity.Film {
+	var films []entity.Film
+	result := repo.db.WithContext(ctx).Find(&films)
+	if result.Error != nil {
+		return []entity.Film{}
+	}
+	return films
 }

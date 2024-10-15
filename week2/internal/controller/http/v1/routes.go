@@ -22,6 +22,7 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 			films.DELETE("/:id", filmHandler.Delete)
 			films.POST("/", filmHandler.Create)
 			films.PUT("/:id", filmHandler.Update)
+			films.GET("/", filmHandler.GetAll)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
