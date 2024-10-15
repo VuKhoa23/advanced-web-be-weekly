@@ -83,6 +83,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "actorId",
                         "name": "id",
                         "in": "path",
@@ -95,6 +96,71 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/entity.Actor"
                         }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an actor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actor"
+                ],
+                "summary": "Update an actor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "actorId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Actor payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ActorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Actor"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an actor with the given ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actor"
+                ],
+                "summary": "Delete an actor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "actorId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Actor deleted successfully"
                     }
                 }
             }
@@ -310,10 +376,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "firstName": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "lastName": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
@@ -334,13 +404,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 10
                 },
                 "languageId": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "length": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "originalLanguageId": {
                     "type": "integer"
@@ -349,22 +423,27 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "releaseYear": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "rentalDuration": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 },
                 "rentalRate": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "replacementCost": {
-                    "type": "number"
+                    "type": "number",
+                    "minimum": 0
                 },
                 "specialFeatures": {
                     "type": "string"
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         }
