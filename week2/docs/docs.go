@@ -208,6 +208,71 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "Update an actor",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actor"
+                ],
+                "summary": "Update an actor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "actorId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Actor payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ActorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Actor"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an actor with the given ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actor"
+                ],
+                "summary": "Delete an actor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "actorId",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Actor deleted successfully"
+                    }
+                }
             }
         },
         "/films": {
