@@ -2,7 +2,6 @@ package main
 
 import (
 	_ "github.com/VuKhoa23/advanced-web-be/docs"
-	_ "github.com/VuKhoa23/advanced-web-be/internal/utils/validator"
 	"github.com/VuKhoa23/advanced-web-be/startup"
 )
 
