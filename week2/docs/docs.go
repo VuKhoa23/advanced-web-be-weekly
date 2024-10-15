@@ -99,6 +99,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/films": {
+            "get": {
+                "description": "Get all films",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Film"
+                ],
+                "summary": "Get all films",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entity.Film"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/films/{id}": {
             "get": {
                 "description": "Get a film with the given ID",

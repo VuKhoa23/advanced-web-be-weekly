@@ -9,4 +9,5 @@ import (
 type FilmService interface {
 	GetFilmById(ctx context.Context, id int64) (*entity.Film, error)
 	DeleteFilm(ctx context.Context, id int64) error
+	GetAllFilms(ctx context.Context) []entity.Film
 }
