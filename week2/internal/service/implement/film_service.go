@@ -2,6 +2,7 @@ package serviceimplement
 
 import (
 	"context"
+	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	"github.com/VuKhoa23/advanced-web-be/internal/repository"
@@ -28,19 +29,46 @@ func (service *FilmService) DeleteFilm(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (service *FilmService) CreateFilm(ctx context.Context, film *entity.Film) error {
-	result := service.filmRepository.CreateFilm(ctx, film)
-	if result != nil {
-		return result
+func (service *FilmService) CreateFilm(ctx context.Context, filmRequest model.FilmRequest) (*entity.Film, error) {
+	film := &entity.Film{
+		Title:              filmRequest.Title,
+		Description:        filmRequest.Description,
+		ReleaseYear:        filmRequest.ReleaseYear,
+		LanguageID:         filmRequest.LanguageID,
+		OriginalLanguageID: filmRequest.OriginalLanguageID,
+		RentalDuration:     filmRequest.RentalDuration,
+		RentalRate:         filmRequest.RentalRate,
+		Length:             filmRequest.Length,
+		ReplacementCost:    filmRequest.ReplacementCost,
+		Rating:             filmRequest.Rating,
+		SpecialFeatures:    filmRequest.SpecialFeatures,
 	}
-	return nil
+
+	err := service.filmRepository.CreateFilm(ctx, film)
+	if err != nil {
+		return nil, err
+	}
+	return film, nil
 }
 
-func (service *FilmService) UpdateFilm(ctx context.Context, film *entity.Film) error {
-	result := service.filmRepository.UpdateFilm(ctx, film)
-	if result != nil {
-		return result
+func (service *FilmService) UpdateFilm(ctx context.Context, filmRequest model.FilmRequest, filmId int64) (*entity.Film, error) {
+	film := &entity.Film{
+		Title:              filmRequest.Title,
+		Description:        filmRequest.Description,
+		ReleaseYear:        filmRequest.ReleaseYear,
+		LanguageID:         filmRequest.LanguageID,
+		OriginalLanguageID: filmRequest.OriginalLanguageID,
+		RentalDuration:     filmRequest.RentalDuration,
+		RentalRate:         filmRequest.RentalRate,
+		Length:             filmRequest.Length,
+		ReplacementCost:    filmRequest.ReplacementCost,
+		Rating:             filmRequest.Rating,
+		SpecialFeatures:    filmRequest.SpecialFeatures,
 	}
-	return nil
-}
 
+	updatedFilm, err := service.filmRepository.UpdateFilm(ctx, film, filmId)
+	if err != nil {
+		return nil, err
+	}
+	return updatedFilm, nil
+}

@@ -2,9 +2,6 @@ package repositoryimplement
 
 import (
 	"context"
-	"errors"
-	"fmt"
-
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	"github.com/VuKhoa23/advanced-web-be/internal/repository"
@@ -92,7 +89,7 @@ func (repo *FilmRepository) DeleteFilm(ctx context.Context, id int64) error {
 	})
 }
 
-func(repo *FilmRepository) CreateFilm(ctx context.Context, film *entity.Film) error {
+func (repo *FilmRepository) CreateFilm(ctx context.Context, film *entity.Film) error {
 	err := repo.db.WithContext(ctx).Create(film).Error
 	if err != nil {
 		return err
@@ -100,21 +97,18 @@ func(repo *FilmRepository) CreateFilm(ctx context.Context, film *entity.Film) er
 	return nil
 }
 
-func(repo *FilmRepository) UpdateFilm(ctx context.Context, film *entity.Film) error {
-	var exsitingFilm entity.Film
-
-	// find film by ID first
-	err := repo.db.First(&exsitingFilm, film.ID).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound){
-			return fmt.Errorf("film with ID %d not found", film.ID)
-		}
-		return err
-	}
+func (repo *FilmRepository) UpdateFilm(ctx context.Context, film *entity.Film, filmId int64) (*entity.Film, error) {
 	// update film
-	err = repo.db.WithContext(ctx).Save(film).Error
-	if err != nil {
-		return err
+	result := repo.db.WithContext(ctx).Model(&entity.Film{ID: filmId}).Updates(&film)
+	if result.Error != nil {
+		return nil, result.Error
 	}
-	return nil
+
+	var updatedFilm entity.Film
+	err := repo.db.WithContext(ctx).First(&updatedFilm, filmId).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedFilm, nil
 }

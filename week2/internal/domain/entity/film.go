@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type Film struct {
-	ID                 int64     `gorm:"column:film_id" json:"id"`
+	ID                 int64     `gorm:"column:film_id;primaryKey" json:"id"`
 	Title              string    `gorm:"column:title" json:"title"`
 	Description        string    `gorm:"column:description" json:"description"`
 	ReleaseYear        uint16    `gorm:"column:release_year" json:"releaseYear"`
