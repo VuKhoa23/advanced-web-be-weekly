@@ -42,14 +42,14 @@ func (repo *ActorRepository) CreateActor(ctx context.Context, actor *entity.Acto
 	return nil
 }
 
-func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Actor, filmId int64) (*entity.Actor, error) {
+func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Actor, actorId int64) (*entity.Actor, error) {
 	//update all columns of an actor
-	if err := repo.db.WithContext(ctx).Model(&entity.Actor{ID: filmId}).Updates(&actor).Error; err != nil {
+	if err := repo.db.WithContext(ctx).Model(&entity.Actor{ID: actorId}).Updates(&actor).Error; err != nil {
 		return nil, err
 	}
 
 	var updatedActor entity.Actor
-	if err := repo.db.WithContext(ctx).First(&updatedActor, filmId).Error; err != nil {
+	if err := repo.db.WithContext(ctx).First(&updatedActor, actorId).Error; err != nil {
 		return nil, err
 	}
 	return &updatedActor, nil
