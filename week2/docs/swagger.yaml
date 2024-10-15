@@ -149,6 +149,20 @@ paths:
       tags:
       - Actor
   /films:
+    get:
+      description: Get all films
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Film'
+            type: array
+      summary: Get all films
+      tags:
+      - Film
     post:
       consumes:
       - application/json
