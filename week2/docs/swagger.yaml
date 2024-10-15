@@ -35,7 +35,7 @@ definitions:
         type: number
       replacementCost:
         type: number
-      special_features:
+      specialFeatures:
         type: string
       title:
         type: string
@@ -49,6 +49,43 @@ definitions:
     required:
     - firstName
     - lastName
+    type: object
+  model.FilmRequest:
+    properties:
+      description:
+        type: string
+      languageId:
+        type: integer
+      length:
+        type: integer
+      originalLanguageId:
+        type: integer
+      rating:
+        type: string
+      releaseYear:
+        type: integer
+      rentalDuration:
+        type: integer
+      rentalRate:
+        type: number
+      replacementCost:
+        type: number
+      specialFeatures:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - languageId
+    - length
+    - originalLanguageId
+    - rating
+    - releaseYear
+    - rentalDuration
+    - rentalRate
+    - replacementCost
+    - specialFeatures
+    - title
     type: object
 info:
   contact: {}
@@ -111,6 +148,49 @@ paths:
       summary: Get an actor
       tags:
       - Actor
+  /films:
+    post:
+      consumes:
+      - application/json
+      description: Create a film
+      parameters:
+      - description: Film payload
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.FilmRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Film'
+      summary: Create a film
+      tags:
+      - Film
+    put:
+      consumes:
+      - application/json
+      description: Update a film
+      parameters:
+      - description: Film payload
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.FilmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Film'
+      summary: Update a film
+      tags:
+      - Film
   /films/{id}:
     delete:
       description: Delete a film with the given ID

@@ -2,6 +2,8 @@ package repositoryimplement
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
@@ -88,4 +90,31 @@ func (repo *FilmRepository) DeleteFilm(ctx context.Context, id int64) error {
 
 		return nil
 	})
+}
+
+func(repo *FilmRepository) CreateFilm(ctx context.Context, film *entity.Film) error {
+	err := repo.db.WithContext(ctx).Create(film).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func(repo *FilmRepository) UpdateFilm(ctx context.Context, film *entity.Film) error {
+	var exsitingFilm entity.Film
+
+	// find film by ID first
+	err := repo.db.First(&exsitingFilm, film.ID).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound){
+			return fmt.Errorf("film with ID %d not found", film.ID)
+		}
+		return err
+	}
+	// update film
+	err = repo.db.WithContext(ctx).Save(film).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

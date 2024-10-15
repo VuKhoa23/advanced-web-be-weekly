@@ -99,6 +99,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/films": {
+            "put": {
+                "description": "Update a film",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Film"
+                ],
+                "summary": "Update a film",
+                "parameters": [
+                    {
+                        "description": "Film payload",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.FilmRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Film"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a film",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Film"
+                ],
+                "summary": "Create a film",
+                "parameters": [
+                    {
+                        "description": "Film payload",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.FilmRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Film"
+                        }
+                    }
+                }
+            }
+        },
         "/films/{id}": {
             "get": {
                 "description": "Get a film with the given ID",
@@ -207,7 +273,7 @@ const docTemplate = `{
                 "replacementCost": {
                     "type": "number"
                 },
-                "special_features": {
+                "specialFeatures": {
                     "type": "string"
                 },
                 "title": {
@@ -226,6 +292,57 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.FilmRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "languageId",
+                "length",
+                "originalLanguageId",
+                "rating",
+                "releaseYear",
+                "rentalDuration",
+                "rentalRate",
+                "replacementCost",
+                "specialFeatures",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "languageId": {
+                    "type": "integer"
+                },
+                "length": {
+                    "type": "integer"
+                },
+                "originalLanguageId": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "string"
+                },
+                "releaseYear": {
+                    "type": "integer"
+                },
+                "rentalDuration": {
+                    "type": "integer"
+                },
+                "rentalRate": {
+                    "type": "number"
+                },
+                "replacementCost": {
+                    "type": "number"
+                },
+                "specialFeatures": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }

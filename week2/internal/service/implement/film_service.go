@@ -27,3 +27,20 @@ func (service *FilmService) DeleteFilm(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (service *FilmService) CreateFilm(ctx context.Context, film *entity.Film) error {
+	result := service.filmRepository.CreateFilm(ctx, film)
+	if result != nil {
+		return result
+	}
+	return nil
+}
+
+func (service *FilmService) UpdateFilm(ctx context.Context, film *entity.Film) error {
+	result := service.filmRepository.UpdateFilm(ctx, film)
+	if result != nil {
+		return result
+	}
+	return nil
+}
+

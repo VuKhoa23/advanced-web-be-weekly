@@ -14,7 +14,7 @@ type Film struct {
 	Length             int64     `gorm:"column:length" json:"length"`
 	ReplacementCost    float64   `gorm:"column:replacement_cost" json:"replacementCost"`
 	Rating             string    `gorm:"column:rating" json:"rating"`
-	SpecialFeatures    string    `gorm:"column:special_features" json:"special_features"`
+	SpecialFeatures    string    `gorm:"column:special_features" json:"specialFeatures"`
 	LastUpdate         time.Time `gorm:"column:last_update;autoUpdateTime" json:"lastUpdate"`
 }
 
