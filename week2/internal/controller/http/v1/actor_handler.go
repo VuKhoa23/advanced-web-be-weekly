@@ -71,7 +71,7 @@ func (handler *ActorHandler) Create(c *gin.Context) {
 		return
 	}
 
-	err := handler.actorService.CreateActor(c.Request.Context(), actorRequest)
+	actor, err := handler.actorService.CreateActor(c.Request.Context(), actorRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.HttpResponse[any]{Message: err.Error(), Data: nil})
 		return
