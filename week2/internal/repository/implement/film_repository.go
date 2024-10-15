@@ -89,3 +89,12 @@ func (repo *FilmRepository) DeleteFilm(ctx context.Context, id int64) error {
 		return nil
 	})
 }
+
+func (repo *FilmRepository) GetAllFilms(ctx context.Context) []entity.Film {
+	var films []entity.Film
+	result := repo.db.WithContext(ctx).Find(&films)
+	if result.Error != nil {
+		return []entity.Film{}
+	}
+	return films
+}

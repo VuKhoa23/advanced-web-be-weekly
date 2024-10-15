@@ -27,3 +27,7 @@ func (service *FilmService) DeleteFilm(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (service *FilmService) GetAllFilms(ctx context.Context) []entity.Film {
+	return service.filmRepository.GetAllFilms(ctx)
+}
