@@ -1,7 +1,7 @@
 package httpcommon
 
 type HttpResponse[T any] struct {
-	Success bool    `json:"Success"`
+	Success bool    `json:"success"`
 	Data    *T      `json:"data"`
 	Errors  []Error `json:"errors"`
 }
