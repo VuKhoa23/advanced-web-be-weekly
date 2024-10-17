@@ -7,6 +7,9 @@ import (
 
 func GetValidations() {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("rating", ValidateRating)
+		err := v.RegisterValidation("rating", ValidateRating)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
