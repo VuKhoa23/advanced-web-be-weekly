@@ -1,0 +1,301 @@
+basePath: /api/v1
+definitions:
+  entity.Actor:
+    properties:
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      lastUpdate:
+        type: string
+    type: object
+  entity.Film:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      languageId:
+        type: integer
+      lastUpdate:
+        type: string
+      length:
+        type: integer
+      originalLanguageId:
+        type: integer
+      rating:
+        type: string
+      releaseYear:
+        type: integer
+      rentalDuration:
+        type: integer
+      rentalRate:
+        type: number
+      replacementCost:
+        type: number
+      specialFeatures:
+        type: string
+      title:
+        type: string
+    type: object
+  model.ActorRequest:
+    properties:
+      firstName:
+        maxLength: 255
+        minLength: 1
+        type: string
+      lastName:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - firstName
+    - lastName
+    type: object
+  model.FilmRequest:
+    properties:
+      description:
+        maxLength: 255
+        minLength: 10
+        type: string
+      languageId:
+        minimum: 0
+        type: integer
+      length:
+        minimum: 1
+        type: integer
+      originalLanguageId:
+        type: integer
+      rating:
+        type: string
+      releaseYear:
+        minimum: 0
+        type: integer
+      rentalDuration:
+        minimum: 1
+        type: integer
+      rentalRate:
+        minimum: 0
+        type: number
+      replacementCost:
+        minimum: 0
+        type: number
+      specialFeatures:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - description
+    - languageId
+    - length
+    - originalLanguageId
+    - rating
+    - releaseYear
+    - rentalDuration
+    - rentalRate
+    - replacementCost
+    - specialFeatures
+    - title
+    type: object
+info:
+  contact: {}
+  description: API for Advanced Web
+  title: API for Advanced Web
+  version: "1.0"
+paths:
+  /actors:
+    get:
+      description: Get all actors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Actor'
+            type: array
+      summary: Get all actors
+      tags:
+      - Actor
+    post:
+      consumes:
+      - application/json
+      description: Create an actor
+      parameters:
+      - description: Actor payload
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.ActorRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Actor'
+      summary: Create an actor
+      tags:
+      - Actor
+  /actors/{id}:
+    delete:
+      description: Delete an actor with the given ID
+      parameters:
+      - description: actorId
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Actor deleted successfully
+      summary: Delete an actor
+      tags:
+      - Actor
+    get:
+      description: Get an actor
+      parameters:
+      - description: actorId
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Actor'
+      summary: Get an actor
+      tags:
+      - Actor
+    put:
+      consumes:
+      - application/json
+      description: Update an actor
+      parameters:
+      - description: actorId
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Actor payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.ActorRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Actor'
+      summary: Update an actor
+      tags:
+      - Actor
+  /films:
+    get:
+      description: Get all films
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Film'
+            type: array
+      summary: Get all films
+      tags:
+      - Film
+    post:
+      consumes:
+      - application/json
+      description: Create a film
+      parameters:
+      - description: Film payload
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.FilmRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Film'
+      summary: Create a film
+      tags:
+      - Film
+    put:
+      consumes:
+      - application/json
+      description: Update a film
+      parameters:
+      - description: Film payload
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/model.FilmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Film'
+      summary: Update a film
+      tags:
+      - Film
+  /films/{id}:
+    delete:
+      description: Delete a film with the given ID
+      parameters:
+      - description: filmId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Film deleted successfully
+      summary: Delete a film
+      tags:
+      - Film
+    get:
+      description: Get a film with the given ID
+      parameters:
+      - description: filmId
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Film'
+      summary: Get a film
+      tags:
+      - Film
+swagger: "2.0"
