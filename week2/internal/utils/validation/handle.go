@@ -3,6 +3,7 @@ package validation
 import (
 	"encoding/json"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
+	stringutils "github.com/VuKhoa23/advanced-web-be/internal/utils/string_utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
@@ -44,15 +45,16 @@ func checkErr(c *gin.Context, err error) {
 func handleValidationErrors(errs error) (httpErrs []httpcommon.Error) {
 	for _, fieldErr := range errs.(validator.ValidationErrors) {
 		errCodeWithStructNs := httpcommon.CustomValidationErrCode[strings.ToLower(fieldErr.StructNamespace())]
+		field := stringutils.FirstLetterToLower(fieldErr.Field())
 		if errCodeWithStructNs == "" {
 			// handle builtin validation
 			httpErrs = append(httpErrs, httpcommon.Error{
-				Message: httpcommon.ErrorMessage.InvalidRequest, Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: fieldErr.Field(),
+				Message: httpcommon.ErrorMessage.InvalidRequest, Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: field,
 			})
 		} else {
 			// handle custom validation
 			httpErrs = append(httpErrs, httpcommon.Error{
-				Message: httpcommon.ErrorMessage.InvalidRequest, Code: errCodeWithStructNs, Field: fieldErr.Field(),
+				Message: httpcommon.ErrorMessage.InvalidRequest, Code: errCodeWithStructNs, Field: field,
 			})
 		}
 	}

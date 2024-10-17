@@ -44,7 +44,7 @@ func (repo *ActorRepository) CreateActor(ctx context.Context, actor *entity.Acto
 
 func (repo *ActorRepository) UpdateActor(ctx context.Context, actor *entity.Actor, actorId int64) (*entity.Actor, error) {
 	//update all columns of an actor
-	if err := repo.db.WithContext(ctx).Model(&entity.Actor{ID: actorId}).Updates(&actor).Error; err != nil {
+	if err := repo.db.WithContext(ctx).Model(&entity.Actor{Id: actorId}).Updates(&actor).Error; err != nil {
 		return nil, err
 	}
 

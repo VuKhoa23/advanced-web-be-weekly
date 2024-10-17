@@ -100,7 +100,7 @@ func (repo *FilmRepository) CreateFilm(ctx context.Context, film *entity.Film) e
 
 func (repo *FilmRepository) UpdateFilm(ctx context.Context, film *entity.Film, filmId int64) (*entity.Film, error) {
 	// update film
-	result := repo.db.WithContext(ctx).Model(&entity.Film{ID: filmId}).Updates(&film)
+	result := repo.db.WithContext(ctx).Model(&entity.Film{Id: filmId}).Updates(&film)
 	if result.Error != nil {
 		return nil, result.Error
 	}
