@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 	"net/http"
 	"strconv"
 
@@ -8,7 +9,6 @@ import (
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,7 +52,7 @@ func (handler *ActorHandler) Get(c *gin.Context) {
 
 	actor, err := handler.actorService.GetActorById(c.Request.Context(), parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
@@ -79,8 +79,7 @@ func (handler *ActorHandler) Get(c *gin.Context) {
 func (handler *ActorHandler) Create(c *gin.Context) {
 	var actorRequest model.ActorRequest
 
-	if err := c.ShouldBindJSON(&actorRequest); err != nil {
-		c.JSON(http.StatusBadRequest, httpcommon.HttpResponse[any]{Success: false, Data: nil})
+	if err := validation.BindJsonAndValidate(c, &actorRequest); err != nil {
 		return
 	}
 
@@ -125,14 +124,13 @@ func (handler *ActorHandler) Update(c *gin.Context) {
 
 	var actorRequest model.ActorRequest
 	//binding request
-	if err = c.ShouldBindJSON(&actorRequest); err != nil {
-		c.JSON(http.StatusBadRequest, httpcommon.HttpResponse[any]{Success: false, Data: nil})
+	if err = validation.BindJsonAndValidate(c, &actorRequest); err != nil {
 		return
 	}
 	//update
 	updatedActor, err := handler.actorService.UpdateActor(c.Request.Context(), actorRequest, parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
@@ -168,7 +166,7 @@ func (handler *ActorHandler) Delete(c *gin.Context) {
 
 	err = handler.actorService.DeleteActor(c.Request.Context(), parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
