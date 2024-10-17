@@ -25,9 +25,11 @@ func NewFilmHandler(filmService service.FilmService) *FilmHandler {
 // @Description Get a film with the given ID
 // @Tags Film
 // @Produce json
-// @Param id path int true "filmId"
+// @Param id path int true "filmId" example(1)
 // @Router /films/{id} [get]
-// @Success 200 {object} entity.Film
+// @Success 200 {object} model.HttpResponse[entity.Film]
+// @Failure 400 {object} model.HttpResponse[any]
+// @Failure 500 {object} model.HttpResponse[any]
 func (handler *FilmHandler) Get(c *gin.Context) {
 	id := c.Param("id")
 
@@ -58,9 +60,11 @@ func (handler *FilmHandler) Get(c *gin.Context) {
 // @Description Delete a film with the given ID
 // @Tags Film
 // @Produce json
-// @Param id path int true "filmId"
+// @Param id path int true "filmId" example(1)
 // @Router /films/{id} [delete]
 // @Success 200 "Film deleted successfully"
+// @Failure 400 {object} model.HttpResponse[any]
+// @Failure 500 {object} model.HttpResponse[any]
 func (handler *FilmHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
@@ -93,10 +97,12 @@ func (handler *FilmHandler) Delete(c *gin.Context) {
 // @Description Create a film
 // @Tags Film
 // @Accept json
-// @Param  params body model.FilmRequest true "Film payload"
+// @Param request body model.FilmRequest true "Film payload"
 // @Produce  json
 // @Router /films [post]
-// @Success 201 {object} entity.Film
+// @Success 200 {object} model.HttpResponse[entity.Film]
+// @Failure 400 {object} model.HttpResponse[any]
+// @Failure 500 {object} model.HttpResponse[any]
 func (handler *FilmHandler) Create(c *gin.Context) {
 	var filmRequest model.FilmRequest
 
@@ -119,10 +125,13 @@ func (handler *FilmHandler) Create(c *gin.Context) {
 // @Description Update a film
 // @Tags Film
 // @Accept json
-// @Param  params body model.FilmRequest true "Film payload"
+// @Param id path int true "filmId" example(1)
+// @Param request body model.FilmRequest true "Film payload"
 // @Produce  json
 // @Router /films [put]
-// @Success 200 {object} entity.Film
+// @Success 200 {object} model.HttpResponse[entity.Film]
+// @Failure 400 {object} model.HttpResponse[any]
+// @Failure 500 {object} model.HttpResponse[any]
 func (handler *FilmHandler) Update(c *gin.Context) {
 	filmId, exists := c.Params.Get("id")
 	if !exists {
@@ -167,7 +176,7 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 // @Tags Film
 // @Produce  json
 // @Router /films [get]
-// @Success 200 {object} []entity.Film
+// @Success 200 {object} model.HttpResponse[[]entity.Film]
 func (handler *FilmHandler) GetAll(c *gin.Context) {
 	films := handler.filmService.GetAllFilms(c.Request.Context())
 	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](&films))
