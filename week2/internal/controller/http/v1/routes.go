@@ -6,21 +6,24 @@ import (
 	"github.com/logdyhq/logdy-core/logdy"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"time"
 )
 
 func Middleware(logger logdy.Logdy) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var bodyData interface{}
 		if err := c.ShouldBindBodyWith(&bodyData, binding.JSON); err != nil {
-			// Handle error
-			return
+			print(err.Error())
+			if err.Error() == "EOF" {
+				bodyData = ""
+			}
 		}
 		logger.Log(logdy.Fields{
 			"method": c.Request.Method,
 			"path":   c.Request.URL.Path,
 			"query":  c.Request.URL.RawQuery,
 			"body":   bodyData,
-			"time":   c.Request.Header.Get("X-Request-Time"),
+			"time":   time.Now(),
 		})
 		c.Next()
 	}
