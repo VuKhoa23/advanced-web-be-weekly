@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func MiddlewareRequest() gin.HandlerFunc {
+func LoggingRequestMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var bodyData interface{}
 		if err := c.ShouldBindBodyWith(&bodyData, binding.JSON); err != nil {
@@ -41,7 +41,7 @@ func (w bodyLogWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func ginBodyLogMiddleware() gin.HandlerFunc {
+func LoggingResponseMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = blw
@@ -67,8 +67,8 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 	})
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
-	router.Use(MiddlewareRequest())
-	router.Use(ginBodyLogMiddleware())
+	router.Use(LoggingRequestMiddleware())
+	router.Use(LoggingResponseMiddleware())
 	v1 := router.Group("/api/v1")
 	{
 		actors := v1.Group("/actors")
