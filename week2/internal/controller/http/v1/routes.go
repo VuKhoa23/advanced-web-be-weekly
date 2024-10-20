@@ -2,11 +2,32 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/logdyhq/logdy-core/logdy"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
+func Middleware(logger logdy.Logdy) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var bodyData interface{}
+		if err := c.ShouldBindBodyWith(&bodyData, binding.JSON); err != nil {
+			// Handle error
+			return
+		}
+		logger.Log(logdy.Fields{
+			"method": c.Request.Method,
+			"path":   c.Request.URL.Path,
+			"query":  c.Request.URL.RawQuery,
+			"body":   bodyData,
+			"time":   c.Request.Header.Get("X-Request-Time"),
+		})
+		c.Next()
+	}
+}
+
+func MapRoutes(router *gin.Engine, logger logdy.Logdy, actorHandler *ActorHandler, filmHandler *FilmHandler) {
+	router.Use(Middleware(logger))
 	v1 := router.Group("/api/v1")
 	{
 		actors := v1.Group("/actors")
