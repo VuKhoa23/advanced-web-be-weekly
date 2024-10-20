@@ -4,7 +4,6 @@ import (
 	"fmt"
 	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
 	"github.com/gin-gonic/gin"
-	"github.com/logdyhq/logdy-core/logdy"
 	"net/http"
 	"os"
 	"strconv"
@@ -27,12 +26,7 @@ func (s *Server) Run() {
 		Handler: router,
 	}
 
-	logger := logdy.InitializeLogdy(logdy.Config{
-		ServerIp:   "127.0.0.1",
-		ServerPort: "8080",
-	}, nil)
-
-	v1.MapRoutes(router, logger, s.actorHandler, s.filmHandler)
+	v1.MapRoutes(router, s.actorHandler, s.filmHandler)
 	err := httpServerInstance.ListenAndServe()
 	if err != nil {
 		return

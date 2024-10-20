@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/logdyhq/logdy-core/logdy"
+	"github.com/natefinch/lumberjack"
+	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"time"
 )
 
-func MiddlewareRequest(logger logdy.Logdy) gin.HandlerFunc {
+func MiddlewareRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var bodyData interface{}
 		if err := c.ShouldBindBodyWith(&bodyData, binding.JSON); err != nil {
@@ -19,13 +20,13 @@ func MiddlewareRequest(logger logdy.Logdy) gin.HandlerFunc {
 				bodyData = ""
 			}
 		}
-		logger.Log(logdy.Fields{
+		logrus.WithFields(logrus.Fields{
 			"method": c.Request.Method + "-request",
 			"path":   c.Request.URL.Path,
 			"query":  c.Request.URL.RawQuery,
 			"body":   bodyData,
 			"time":   time.Now(),
-		})
+		}).Info()
 		c.Next()
 	}
 }
@@ -40,26 +41,34 @@ func (w bodyLogWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func ginBodyLogMiddleware(logger logdy.Logdy) gin.HandlerFunc {
+func ginBodyLogMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = blw
 		c.Next()
 		statusCode := c.Writer.Status()
 		if statusCode >= 0 {
-			logger.Log(logdy.Fields{
+			logrus.WithFields(logrus.Fields{
 				"method": c.Request.Method + "-response",
 				"path":   c.Request.URL.Path,
 				"query":  c.Request.URL.RawQuery,
 				"body":   blw.body.String(),
 				"time":   time.Now(),
-			})
+			}).Info()
 		}
 	}
 }
-func MapRoutes(router *gin.Engine, logger logdy.Logdy, actorHandler *ActorHandler, filmHandler *FilmHandler) {
-	router.Use(MiddlewareRequest(logger))
-	router.Use(ginBodyLogMiddleware(logger))
+func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
+	logrus.SetOutput(&lumberjack.Logger{
+		Filename:   "app.log",
+		MaxSize:    1, // megabytes
+		MaxBackups: 1,
+		MaxAge:     1, //days
+	})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
+	router.Use(MiddlewareRequest())
+	router.Use(ginBodyLogMiddleware())
 	v1 := router.Group("/api/v1")
 	{
 		actors := v1.Group("/actors")
