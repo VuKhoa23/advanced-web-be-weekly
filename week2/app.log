@@ -1,0 +1,2 @@
+time="2024-10-20T16:06:50+07:00" level=info msg="Request details" fields.time= method=GET path=/api/v1/actors/ query=
+time="2024-10-20T16:47:40+07:00" level=info msg="Request details" fields.time= method=GET path=/api/v1/actors/ query=
