@@ -24,6 +24,7 @@ require (
 	github.com/logdyhq/logdy-core v0.13.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect

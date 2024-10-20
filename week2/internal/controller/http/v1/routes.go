@@ -3,12 +3,13 @@ package v1
 import (
 	"github.com/VuKhoa23/advanced-web-be/internal/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/logdyhq/logdy-core/logdy"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
-	router.Use(middleware.Logging())
+func MapRoutes(router *gin.Engine, logdyLogger logdy.Logdy, actorHandler *ActorHandler, filmHandler *FilmHandler) {
+	router.Use(middleware.Logging(logdyLogger))
 	v1 := router.Group("/api/v1")
 	{
 		actors := v1.Group("/actors")
