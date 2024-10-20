@@ -2,13 +2,11 @@ package http
 
 import (
 	"fmt"
+	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
-
-	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
 )
 
 type Server struct {
