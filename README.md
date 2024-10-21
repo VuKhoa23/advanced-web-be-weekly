@@ -12,3 +12,12 @@ http://localhost:PORT/swagger/index.html
 ```bash
 $ make wire
 ```
+---
+### Logdy
+```bash
+$ make logdy
+```
+### Logdy UI located at
+```link
+http://localhost:8081
+```
