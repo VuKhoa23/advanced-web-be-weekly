@@ -2,30 +2,37 @@ package v1
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"time"
+	"io"
 )
 
 func LoggingRequestMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var bodyData interface{}
-		if err := c.ShouldBindBodyWith(&bodyData, binding.JSON); err != nil {
-			print(err.Error())
-			if err.Error() == "EOF" {
-				bodyData = ""
-			}
+		bodyBytes, _ := io.ReadAll(c.Request.Body)
+		err := c.Request.Body.Close()
+		if err != nil {
+			c.Next()
+			return
 		}
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+		var bodyJSON map[string]interface{}
+		err = json.Unmarshal(bodyBytes, &bodyJSON)
+		if err != nil {
+			c.Next()
+			return
+		}
+
 		logrus.WithFields(logrus.Fields{
 			"method": c.Request.Method + "-request",
 			"path":   c.Request.URL.Path,
 			"query":  c.Request.URL.RawQuery,
-			"body":   bodyData,
-			"time":   time.Now(),
+			"body":   bodyJSON,
 		}).Info()
 		c.Next()
 	}
@@ -48,16 +55,26 @@ func LoggingResponseMiddleware() gin.HandlerFunc {
 		c.Next()
 		statusCode := c.Writer.Status()
 		if statusCode >= 0 {
-			logrus.WithFields(logrus.Fields{
-				"method": c.Request.Method + "-response",
-				"path":   c.Request.URL.Path,
-				"query":  c.Request.URL.RawQuery,
-				"body":   blw.body.String(),
-				"time":   time.Now(),
-			}).Info()
+			if statusCode < 400 {
+				logrus.WithFields(logrus.Fields{
+					"method": c.Request.Method + "-response",
+					"path":   c.Request.URL.Path,
+					"query":  c.Request.URL.RawQuery,
+					"body":   blw.body.String(),
+				}).Info()
+			} else {
+				logrus.WithFields(logrus.Fields{
+					"method": c.Request.Method + "-response",
+					"path":   c.Request.URL.Path,
+					"query":  c.Request.URL.RawQuery,
+					"body":   blw.body.String(),
+				}).Error()
+			}
+
 		}
 	}
 }
+
 func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
 	logrus.SetOutput(&lumberjack.Logger{
 		Filename:   "app.log",
