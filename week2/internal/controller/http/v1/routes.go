@@ -48,13 +48,24 @@ func LoggingResponseMiddleware() gin.HandlerFunc {
 		c.Next()
 		statusCode := c.Writer.Status()
 		if statusCode >= 0 {
-			logrus.WithFields(logrus.Fields{
-				"method": c.Request.Method + "-response",
-				"path":   c.Request.URL.Path,
-				"query":  c.Request.URL.RawQuery,
-				"body":   blw.body.String(),
-				"time":   time.Now(),
-			}).Info()
+			if statusCode < 400 {
+				logrus.WithFields(logrus.Fields{
+					"method": c.Request.Method + "-response",
+					"path":   c.Request.URL.Path,
+					"query":  c.Request.URL.RawQuery,
+					"body":   blw.body.String(),
+					"time":   time.Now(),
+				}).Info()
+			} else {
+				logrus.WithFields(logrus.Fields{
+					"method": c.Request.Method + "-response",
+					"path":   c.Request.URL.Path,
+					"query":  c.Request.URL.RawQuery,
+					"body":   blw.body.String(),
+					"time":   time.Now(),
+				}).Error()
+			}
+
 		}
 	}
 }
