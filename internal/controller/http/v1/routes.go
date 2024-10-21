@@ -14,15 +14,13 @@ import (
 func LoggingRequestMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bodyBytes, _ := io.ReadAll(c.Request.Body)
-		err := c.Request.Body.Close()
-		if err != nil {
-			c.Next()
-			return
-		}
+		// close request body to reuse underlying TCP socket
+		_ = c.Request.Body.Close()
+		// re populate the Body
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		var bodyJSON map[string]interface{}
-		err = json.Unmarshal(bodyBytes, &bodyJSON)
+		err := json.Unmarshal(bodyBytes, &bodyJSON)
 		if err != nil {
 			c.Next()
 			return
