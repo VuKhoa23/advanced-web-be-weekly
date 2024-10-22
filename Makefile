@@ -3,4 +3,4 @@ swagger:
 wire:
 	wire ./internal
 logdy:
-	./logdy.sh
+	tail -f $(name) | logdy --port=8081
