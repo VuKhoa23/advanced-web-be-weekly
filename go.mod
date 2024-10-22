@@ -15,6 +15,11 @@ require (
 )
 
 require (
+	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
+)
+
+require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/bytedance/sonic v1.12.3 // indirect

@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
-
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
@@ -42,7 +40,7 @@ func (handler *FilmHandler) Get(c *gin.Context) {
 
 	film, err := handler.filmService.GetFilmById(c.Request.Context(), parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
@@ -78,7 +76,7 @@ func (handler *FilmHandler) Delete(c *gin.Context) {
 
 	err = handler.filmService.DeleteFilm(c.Request.Context(), parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
@@ -157,7 +155,7 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 
 	film, err := handler.filmService.UpdateFilm(c.Request.Context(), filmRequest, parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
