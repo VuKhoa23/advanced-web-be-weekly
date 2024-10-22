@@ -11,5 +11,5 @@ type FilmRequest struct {
 	Length             int64   `json:"length" binding:"required,min=1"`
 	ReplacementCost    float64 `json:"replacementCost" binding:"required,min=0"`
 	Rating             string  `json:"rating" binding:"required,rating"`
-	SpecialFeatures    string  `json:"specialFeatures" binding:"required"`
+	SpecialFeatures    string  `json:"specialFeatures" binding:"required,special_features"`
 }

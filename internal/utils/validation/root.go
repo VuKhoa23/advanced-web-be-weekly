@@ -11,5 +11,10 @@ func GetValidations() {
 		if err != nil {
 			panic(err)
 		}
+
+		err = v.RegisterValidation("special_features", ValidateSpecialFeatures)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
