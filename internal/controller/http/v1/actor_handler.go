@@ -8,7 +8,6 @@ import (
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,7 +51,7 @@ func (handler *ActorHandler) Get(c *gin.Context) {
 
 	actor, err := handler.actorService.GetActorById(c.Request.Context(), parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
@@ -132,7 +131,7 @@ func (handler *ActorHandler) Update(c *gin.Context) {
 	//update
 	updatedActor, err := handler.actorService.UpdateActor(c.Request.Context(), actorRequest, parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
@@ -168,7 +167,7 @@ func (handler *ActorHandler) Delete(c *gin.Context) {
 
 	err = handler.actorService.DeleteActor(c.Request.Context(), parsedId)
 	if err != nil {
-		if err.Error() == constants.ErrorMessage.GormRecordNotFound {
+		if err.Error() == httpcommon.ErrorMessage.GormRecordNotFound {
 			c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpcommon.Error{
 				Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.RecordNotFound,
 			}))
