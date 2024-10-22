@@ -22,14 +22,12 @@ func LoggingRequestMiddleware() gin.HandlerFunc {
 		var bodyJSON map[string]interface{}
 		err := json.Unmarshal(bodyBytes, &bodyJSON)
 		if err != nil {
-			c.Next()
-			return
+			bodyJSON = nil
 		}
 
 		logrus.WithFields(logrus.Fields{
 			"method": c.Request.Method + "-request",
 			"path":   c.Request.URL.Path,
-			"query":  c.Request.URL.RawQuery,
 			"body":   bodyJSON,
 		}).Info()
 		c.Next()
@@ -57,14 +55,12 @@ func LoggingResponseMiddleware() gin.HandlerFunc {
 				logrus.WithFields(logrus.Fields{
 					"method": c.Request.Method + "-response",
 					"path":   c.Request.URL.Path,
-					"query":  c.Request.URL.RawQuery,
 					"body":   blw.body.String(),
 				}).Info()
 			} else {
 				logrus.WithFields(logrus.Fields{
 					"method": c.Request.Method + "-response",
 					"path":   c.Request.URL.Path,
-					"query":  c.Request.URL.RawQuery,
 					"body":   blw.body.String(),
 				}).Error()
 			}
