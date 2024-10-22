@@ -19,7 +19,8 @@ var ErrorResponseCode = errorResponseCode{
 type customValidationErrCode map[string]string
 
 var CustomValidationErrCode = customValidationErrCode{
-	"filmrequest.rating": "INVALID_FILM_RATING",
+	"filmrequest.rating":          "INVALID_FILM_RATING",
+	"filmrequest.specialfeatures": "INVALID_SPEACIAL_FEATURES",
 }
 
 type errorMessage struct {
