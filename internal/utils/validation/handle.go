@@ -14,7 +14,12 @@ func BindJsonAndValidate(c *gin.Context, dest interface{}) error {
 	err := c.ShouldBindJSON(&dest)
 
 	if err != nil {
-		checkErr(c, err)
+		httpErr := httpcommon.Error{
+			Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidDataType, Field: "",
+		}
+		c.JSON(http.StatusBadRequest, httpcommon.NewErrorResponse(httpErr))
+
+		//checkErr(c, err)
 	}
 	return err
 }
