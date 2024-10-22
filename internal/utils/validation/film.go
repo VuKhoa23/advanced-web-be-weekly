@@ -31,7 +31,6 @@ func ValidateSpecialFeatures(fl validator.FieldLevel) bool {
     featureList := strings.Split(features, ",")
 
     for _, feature := range featureList {
-        feature = strings.TrimSpace(feature)
         if _, exists := validFeatures[feature]; !exists {
             return false
         }
