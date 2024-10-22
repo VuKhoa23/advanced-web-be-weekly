@@ -1,6 +1,8 @@
 package validation
 
 import (
+	"strings"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -16,3 +18,25 @@ func ValidateRating(fl validator.FieldLevel) bool {
 	}
 	return false
 }
+
+func ValidateSpecialFeatures(fl validator.FieldLevel) bool {
+    validFeatures := map[string]struct{}{
+        "Trailers":       {},
+        "Commentaries":   {},
+        "Deleted Scenes": {},
+        "Behind the Scenes": {},
+    }
+
+    features := fl.Field().String()
+    featureList := strings.Split(features, ",")
+
+    for _, feature := range featureList {
+        feature = strings.TrimSpace(feature)
+        if _, exists := validFeatures[feature]; !exists {
+            return false
+        }
+    }
+
+    return true
+}
+
