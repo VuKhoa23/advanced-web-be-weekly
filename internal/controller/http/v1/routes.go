@@ -9,6 +9,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"io"
+	"os"
 	"time"
 )
 
@@ -81,11 +82,12 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 	currentTime := time.Now()
 	formattedDate := currentTime.Format("02-01-2006")
 
-	logrus.SetOutput(&lumberjack.Logger{
+	multiWriter := io.MultiWriter(os.Stdout, &lumberjack.Logger{
 		Filename: "logs/" + formattedDate + ".log",
 		MaxSize:  10, // megabytes
 		MaxAge:   7,  // days
 	})
+	logrus.SetOutput(multiWriter)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	router.Use(gin.Recovery())
