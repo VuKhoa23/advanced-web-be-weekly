@@ -3,4 +3,4 @@ swagger:
 wire:
 	wire ./internal
 logdy:
-	tail -f $(name) | logdy --port=8081
+	tail -f logs/$(name).log | logdy --port=8081 --max-message-count=0
