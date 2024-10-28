@@ -11,27 +11,26 @@ import (
 	"io"
 )
 
-func LoggingRequestMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		bodyBytes, _ := io.ReadAll(c.Request.Body)
-		// close request body to reuse underlying TCP socket
-		_ = c.Request.Body.Close()
-		// re populate the Body
-		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+func LoggingRequestMiddleware(c *gin.Context) {
 
-		var bodyJSON map[string]interface{}
-		err := json.Unmarshal(bodyBytes, &bodyJSON)
-		if err != nil {
-			bodyJSON = nil
-		}
+	bodyBytes, _ := io.ReadAll(c.Request.Body)
+	// close request body to reuse underlying TCP socket
+	_ = c.Request.Body.Close()
+	// re populate the Body
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-		logrus.WithFields(logrus.Fields{
-			"method": c.Request.Method + "-request",
-			"path":   c.Request.URL.Path,
-			"body":   bodyJSON,
-		}).Info()
-		c.Next()
+	var bodyJSON map[string]interface{}
+	err := json.Unmarshal(bodyBytes, &bodyJSON)
+	if err != nil {
+		bodyJSON = nil
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"method": c.Request.Method + "-request",
+		"path":   c.Request.URL.Path,
+		"body":   bodyJSON,
+	}).Info()
+	c.Next()
 }
 
 type bodyLogWriter struct {
@@ -44,28 +43,26 @@ func (w bodyLogWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-func LoggingResponseMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
-		c.Writer = blw
-		c.Next()
-		statusCode := c.Writer.Status()
-		if statusCode >= 0 {
-			if statusCode < 400 {
-				logrus.WithFields(logrus.Fields{
-					"method": c.Request.Method + "-response",
-					"path":   c.Request.URL.Path,
-					"body":   blw.body.String(),
-				}).Info()
-			} else {
-				logrus.WithFields(logrus.Fields{
-					"method": c.Request.Method + "-response",
-					"path":   c.Request.URL.Path,
-					"body":   blw.body.String(),
-				}).Error()
-			}
-
+func LoggingResponseMiddleware(c *gin.Context) {
+	blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+	c.Writer = blw
+	c.Next()
+	statusCode := c.Writer.Status()
+	if statusCode >= 0 {
+		if statusCode < 400 {
+			logrus.WithFields(logrus.Fields{
+				"method": c.Request.Method + "-response",
+				"path":   c.Request.URL.Path,
+				"body":   blw.body.String(),
+			}).Info()
+		} else {
+			logrus.WithFields(logrus.Fields{
+				"method": c.Request.Method + "-response",
+				"path":   c.Request.URL.Path,
+				"body":   blw.body.String(),
+			}).Error()
 		}
+
 	}
 }
 
@@ -78,8 +75,8 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 	})
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
-	router.Use(LoggingRequestMiddleware())
-	router.Use(LoggingResponseMiddleware())
+	router.Use(LoggingRequestMiddleware)
+	router.Use(LoggingResponseMiddleware)
 	v1 := router.Group("/api/v1")
 	{
 		actors := v1.Group("/actors")
