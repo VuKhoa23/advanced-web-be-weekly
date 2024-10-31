@@ -40,6 +40,73 @@ definitions:
       title:
         type: string
     type: object
+  httpcommon.Error:
+    properties:
+      code:
+        type: string
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  httpcommon.HttpResponse-any:
+    properties:
+      data: {}
+      errors:
+        items:
+          $ref: '#/definitions/httpcommon.Error'
+        type: array
+      success:
+        type: boolean
+    type: object
+  httpcommon.HttpResponse-array_entity_Actor:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entity.Actor'
+        type: array
+      errors:
+        items:
+          $ref: '#/definitions/httpcommon.Error'
+        type: array
+      success:
+        type: boolean
+    type: object
+  httpcommon.HttpResponse-array_entity_Film:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entity.Film'
+        type: array
+      errors:
+        items:
+          $ref: '#/definitions/httpcommon.Error'
+        type: array
+      success:
+        type: boolean
+    type: object
+  httpcommon.HttpResponse-entity_Actor:
+    properties:
+      data:
+        $ref: '#/definitions/entity.Actor'
+      errors:
+        items:
+          $ref: '#/definitions/httpcommon.Error'
+        type: array
+      success:
+        type: boolean
+    type: object
+  httpcommon.HttpResponse-entity_Film:
+    properties:
+      data:
+        $ref: '#/definitions/entity.Film'
+      errors:
+        items:
+          $ref: '#/definitions/httpcommon.Error'
+        type: array
+      success:
+        type: boolean
+    type: object
   model.ActorRequest:
     properties:
       firstName:
@@ -115,9 +182,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/entity.Actor'
-            type: array
+            $ref: '#/definitions/httpcommon.HttpResponse-array_entity_Actor'
       summary: Get all actors
       tags:
       - Actor
@@ -138,7 +203,15 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.Actor'
+            $ref: '#/definitions/httpcommon.HttpResponse-entity_Actor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Create an actor
       tags:
       - Actor
@@ -157,6 +230,14 @@ paths:
       responses:
         "200":
           description: Actor deleted successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Delete an actor
       tags:
       - Actor
@@ -175,7 +256,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Actor'
+            $ref: '#/definitions/httpcommon.HttpResponse-entity_Actor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Get an actor
       tags:
       - Actor
@@ -202,7 +291,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Actor'
+            $ref: '#/definitions/httpcommon.HttpResponse-entity_Actor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Update an actor
       tags:
       - Actor
@@ -215,9 +312,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/entity.Film'
-            type: array
+            $ref: '#/definitions/httpcommon.HttpResponse-array_entity_Film'
       summary: Get all films
       tags:
       - Film
@@ -228,28 +323,7 @@ paths:
       parameters:
       - description: Film payload
         in: body
-        name: params
-        required: true
-        schema:
-          $ref: '#/definitions/model.FilmRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/entity.Film'
-      summary: Create a film
-      tags:
-      - Film
-    put:
-      consumes:
-      - application/json
-      description: Update a film
-      parameters:
-      - description: Film payload
-        in: body
-        name: params
+        name: request
         required: true
         schema:
           $ref: '#/definitions/model.FilmRequest'
@@ -259,7 +333,50 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Film'
+            $ref: '#/definitions/httpcommon.HttpResponse-entity_Film'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+      summary: Create a film
+      tags:
+      - Film
+    put:
+      consumes:
+      - application/json
+      description: Update a film
+      parameters:
+      - description: filmId
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Film payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.FilmRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-entity_Film'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Update a film
       tags:
       - Film
@@ -268,6 +385,7 @@ paths:
       description: Delete a film with the given ID
       parameters:
       - description: filmId
+        example: 1
         in: path
         name: id
         required: true
@@ -277,6 +395,14 @@ paths:
       responses:
         "200":
           description: Film deleted successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Delete a film
       tags:
       - Film
@@ -284,6 +410,7 @@ paths:
       description: Get a film with the given ID
       parameters:
       - description: filmId
+        example: 1
         in: path
         name: id
         required: true
@@ -294,7 +421,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Film'
+            $ref: '#/definitions/httpcommon.HttpResponse-entity_Film'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpcommon.HttpResponse-any'
       summary: Get a film
       tags:
       - Film

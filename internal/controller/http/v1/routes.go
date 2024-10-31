@@ -9,16 +9,22 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"io"
+	"os"
+	"time"
 )
 
 func LoggingRequestMiddleware(c *gin.Context) {
+	defer func() {
+		if r := recover(); r != nil {
+			c.Next()
+		}
+	}()
 
 	bodyBytes, _ := io.ReadAll(c.Request.Body)
 	// close request body to reuse underlying TCP socket
 	_ = c.Request.Body.Close()
 	// re populate the Body
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-
 	var bodyJSON map[string]interface{}
 	err := json.Unmarshal(bodyBytes, &bodyJSON)
 	if err != nil {
@@ -44,6 +50,12 @@ func (w bodyLogWriter) Write(b []byte) (int, error) {
 }
 
 func LoggingResponseMiddleware(c *gin.Context) {
+	defer func() {
+		if r := recover(); r != nil {
+			c.Next()
+		}
+	}()
+
 	blw := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 	c.Writer = blw
 	c.Next()
@@ -67,14 +79,18 @@ func LoggingResponseMiddleware(c *gin.Context) {
 }
 
 func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
-	logrus.SetOutput(&lumberjack.Logger{
-		Filename:   "app.log",
-		MaxSize:    1, // megabytes
-		MaxBackups: 1,
-		MaxAge:     1, //days
+	currentTime := time.Now()
+	formattedDate := currentTime.Format("02-01-2006")
+
+	multiWriter := io.MultiWriter(os.Stdout, &lumberjack.Logger{
+		Filename: "logs/" + formattedDate + ".log",
+		MaxSize:  10, // megabytes
+		MaxAge:   7,  // days
 	})
+	logrus.SetOutput(multiWriter)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
+	router.Use(gin.Recovery())
 	router.Use(LoggingRequestMiddleware)
 	router.Use(LoggingResponseMiddleware)
 	v1 := router.Group("/api/v1")
