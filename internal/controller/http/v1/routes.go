@@ -95,15 +95,6 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 	router.Use(LoggingResponseMiddleware)
 	v1 := router.Group("/api/v1")
 	{
-		actors := v1.Group("/actors")
-		{
-			actors.POST("/", actorHandler.Create)
-			actors.GET("/", actorHandler.GetAll)
-			actors.GET("/:id", actorHandler.Get)
-			actors.PUT("/:id", actorHandler.Update)
-			actors.DELETE("/:id", actorHandler.Delete)
-		}
-
 		films := v1.Group("/films")
 		{
 			films.GET("/:id", filmHandler.Get)
