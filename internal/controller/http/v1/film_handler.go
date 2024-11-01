@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"encoding/json"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -175,6 +177,29 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 // @Router /films [get]
 // @Success 200 {object} httpcommon.HttpResponse[[]entity.Film]
 func (handler *FilmHandler) GetAll(c *gin.Context) {
-	films := handler.filmService.GetAllFilms(c.Request.Context())
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](&films))
+	//films := handler.filmService.GetAllFilms(c.Request.Context())
+
+	//create client and setup
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "http://localhost:3001/api/v1/films", nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	//call API and handler response
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	//mapping and response
+	var res httpcommon.HttpResponse[[]entity.Film]
+	if err := json.Unmarshal(body, &res); err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	films := res.Data
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[*[]entity.Film](&films))
 }
