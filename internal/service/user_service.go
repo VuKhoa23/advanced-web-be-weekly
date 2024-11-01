@@ -7,6 +7,6 @@ import (
 )
 
 type UserService interface {
-	CheckPassword(ctx context.Context, userRequest model.UserRequest) (*entity.User, error)
-	CreateUser(ctx context.Context, userRequest model.UserRequest) (string, error)
+	Login(ctx context.Context, loginRequest model.LoginRequest) (*entity.User, error)
+	Register(ctx context.Context, registerRequest model.RegisterRequest) (string, error)
 }

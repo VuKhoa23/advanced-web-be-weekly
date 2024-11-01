@@ -26,7 +26,7 @@ var serverSet = wire.NewSet(
 var handlerSet = wire.NewSet(
 	v1.NewActorHandler,
 	v1.NewFilmHandler,
-	v1.NewUserHandler,
+	v1.NewAuthHandler,
 )
 
 var serviceSet = wire.NewSet(

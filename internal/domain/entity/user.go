@@ -1,7 +1,7 @@
 package entity
 
 type User struct {
-	UserName string `gorm:"column:user_name;primaryKey" json:"userName"`
+	Username string `gorm:"column:username;primaryKey" json:"username"`
 	Password string `gorm:"column:password" json:"password"`
 }
 

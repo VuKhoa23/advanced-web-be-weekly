@@ -6,49 +6,51 @@ import (
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
-type UserHandler struct {
+type AuthHandler struct {
 	userService service.UserService
 }
 
-func NewUserHandler(userService service.UserService) *UserHandler {
-	return &UserHandler{userService: userService}
+func NewAuthHandler(userService service.UserService) *AuthHandler {
+	return &AuthHandler{userService: userService}
 }
-func (handler *UserHandler) Register(c *gin.Context) {
-	var userRequest model.UserRequest
 
-	if err := c.ShouldBind(&userRequest); err != nil {
+func (handler *AuthHandler) Register(c *gin.Context) {
+	var registerRequest model.RegisterRequest
+
+	if err := c.ShouldBind(&registerRequest); err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InvalidRequest,
 		}))
 		return
 	}
 
-	userName, err := handler.userService.CreateUser(c.Request.Context(), userRequest)
+	username, err := handler.userService.Register(c.Request.Context(), registerRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
 		}))
 		return
 	}
-	c.JSON(http.StatusCreated, httpcommon.NewSuccessResponse[entity.User](&entity.User{UserName: userName}))
+	c.JSON(http.StatusCreated, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: username}))
 }
 
-func (handler *UserHandler) Login(c *gin.Context) {
-	var userRequest model.UserRequest
+func (handler *AuthHandler) Login(c *gin.Context) {
+	var loginRequest model.LoginRequest
 
-	if err := c.ShouldBind(&userRequest); err != nil {
+	if err := c.ShouldBind(&loginRequest); err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InvalidRequest,
 		}))
 		return
 	}
 
-	user, err := handler.userService.CheckPassword(c.Request.Context(), userRequest)
+	user, err := handler.userService.Login(c.Request.Context(), loginRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InvalidUserInfo,
@@ -67,8 +69,8 @@ func (handler *UserHandler) Login(c *gin.Context) {
 		Name:     "access_token",
 		Value:    tokenString,
 		HttpOnly: true,
-		Expires:  time.Now().Add(3 * time.Hour),
+		Expires:  time.Now().Add(constants.COOKIE_DURATION),
 	}
 	http.SetCookie(c.Writer, cookie)
-	c.JSON(http.StatusCreated, httpcommon.NewSuccessResponse[entity.User](&entity.User{UserName: user.UserName}))
+	c.JSON(http.StatusCreated, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: user.Username}))
 }

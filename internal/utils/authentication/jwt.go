@@ -7,12 +7,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"os"
 	"time"
 )
 
 type Claims struct {
-	UserName string `json:"userName"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 	Exp      int64  `json:"exp"`
 }
@@ -21,9 +22,9 @@ var secretKey = os.Getenv("JWT_SECRET_KEY")
 
 func GenerateAccessToken(user *entity.User) (string, error) {
 	claims := Claims{
-		UserName: user.UserName,
+		Username: user.Username,
 		Password: user.Password,
-		Exp:      time.Now().Add(time.Hour * 24).Unix(),
+		Exp:      time.Now().Add(constants.JWT_DURATION).Unix(),
 	}
 
 	// Mã hóa payload thành JSON

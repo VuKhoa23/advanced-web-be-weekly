@@ -17,31 +17,32 @@ func NewUserService(userRepository repository.UserRepository) service.UserServic
 	return &UserService{userRepository: userRepository}
 }
 
-func (service *UserService) CheckPassword(ctx context.Context, userRequest model.UserRequest) (*entity.User, error) {
-	user, err := service.userRepository.FindUserByUsername(ctx, userRequest.UserName)
+func (service *UserService) Login(ctx context.Context, loginRequest model.LoginRequest) (*entity.User, error) {
+	user, err := service.userRepository.FindUserByUsername(ctx, loginRequest.Username)
 	if err != nil {
 		return nil, err
 	}
 	//check password
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userRequest.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
-func (service *UserService) CreateUser(ctx context.Context, userRequest model.UserRequest) (string, error) {
+
+func (service *UserService) Register(ctx context.Context, register model.RegisterRequest) (string, error) {
 	//hash password before save
-	hashPW, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+	hashPW, err := bcrypt.GenerateFromPassword([]byte(register.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
 	user := &entity.User{
-		UserName: userRequest.UserName,
+		Username: register.Username,
 		Password: string(hashPW),
 	}
 	err = service.userRepository.CreateUser(ctx, user)
 	if err != nil {
 		return "", err
 	}
-	return user.UserName, nil
+	return user.Username, nil
 }

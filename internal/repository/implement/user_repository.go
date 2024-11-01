@@ -18,7 +18,7 @@ func NewUserRepository(db database.Db) repository.UserRepository {
 
 func (repo *UserRepository) FindUserByUsername(ctx context.Context, username string) (*entity.User, error) {
 	var user entity.User
-	err := repo.db.WithContext(ctx).Where("user_name = ?", username).First(&user).Error
+	err := repo.db.WithContext(ctx).Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
