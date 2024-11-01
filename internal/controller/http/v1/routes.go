@@ -103,6 +103,10 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 			actors.PUT("/:id", actorHandler.Update)
 			actors.DELETE("/:id", actorHandler.Delete)
 		}
+		films := v1.Group("/films")
+		{
+			films.GET("/", filmHandler.GetAll)
+		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
