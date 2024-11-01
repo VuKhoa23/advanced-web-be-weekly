@@ -1,6 +1,10 @@
 package stringutils
 
-import "unicode"
+import (
+	"unicode"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 func FirstLetterToLower(s string) string {
 
@@ -13,3 +17,14 @@ func FirstLetterToLower(s string) string {
 
 	return string(r)
 }
+
+func HashPassword(str string) string {
+	bytes, _ := bcrypt.GenerateFromPassword([]byte(str), 14)
+	return string(bytes)
+}
+
+func CompareHashAndPassword(hashedPassword, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
+}
+

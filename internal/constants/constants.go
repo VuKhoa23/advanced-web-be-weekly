@@ -1,0 +1,3 @@
+package constants
+
+const JWT_SERCRET = "SercetSercetSercetSercetSercetSercetSercetSercetSercetSercetSercetSercetSercet"

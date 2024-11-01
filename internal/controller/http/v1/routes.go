@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/VuKhoa23/advanced-web-be/internal/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
@@ -79,7 +80,7 @@ func LoggingResponseMiddleware(c *gin.Context) {
 	}
 }
 
-func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
+func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler, userHandler *UserHandler) {
 	currentTime := time.Now()
 	formattedDate := currentTime.Format("02-01-2006")
 
@@ -92,8 +93,8 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	router.Use(gin.Recovery())
-	router.Use(LoggingRequestMiddleware)
-	router.Use(LoggingResponseMiddleware)
+	// router.Use(LoggingRequestMiddleware)
+	// router.Use(LoggingResponseMiddleware)
 	v1 := router.Group("/api/v1")
 	{
 		actors := v1.Group("/actors")
@@ -107,7 +108,13 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 
 		films := v1.Group("/films")
 		{
-			films.GET("/", filmHandler.GetAll)
+			films.GET("/", middleware.AuthMiddleware, filmHandler.GetAll)
+		}
+
+		users := v1.Group("/users")
+		{
+			users.POST("/register", userHandler.Register)
+			users.POST("/login", userHandler.Login)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

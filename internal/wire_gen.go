@@ -25,7 +25,10 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 	filmRepository := repositoryimplement.NewFilmRepository(db)
 	filmService := serviceimplement.NewFilmService(filmRepository)
 	filmHandler := v1.NewFilmHandler(filmService)
-	server := http.NewServer(actorHandler, filmHandler)
+	userRepository := repositoryimplement.NewUserRepository(db)
+	userService := serviceimplement.NewUserService(userRepository)
+	userHandler := v1.NewUserHandler(userService)
+	server := http.NewServer(actorHandler, filmHandler, userHandler)
 	apiContainer := controller.NewApiContainer(server)
 	return apiContainer
 }
@@ -38,8 +41,8 @@ var container = wire.NewSet(controller.NewApiContainer)
 var serverSet = wire.NewSet(http.NewServer)
 
 // handler === controller | with service and repository layers to form 3 layers architecture
-var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler)
+var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler, v1.NewUserHandler)
 
-var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService)
+var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService, serviceimplement.NewUserService)
 
-var repositorySet = wire.NewSet(repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository)
+var repositorySet = wire.NewSet(repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository, repositoryimplement.NewUserRepository)
