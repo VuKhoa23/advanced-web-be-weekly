@@ -3,12 +3,15 @@ package v1
 import (
 	"bytes"
 	"encoding/json"
+	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"io"
+	"net/http"
 	"os"
 	"time"
 )
@@ -78,7 +81,25 @@ func LoggingResponseMiddleware(c *gin.Context) {
 	}
 }
 
-func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler) {
+func TokenMiddleware(c *gin.Context) {
+	cookie, err := c.Request.Cookie("access_token")
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
+		}))
+		return
+	}
+
+	_, err = authentication.VerifyToken(cookie.Value)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
+		}))
+		return
+	}
+}
+
+func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler, userHandler *UserHandler) {
 	currentTime := time.Now()
 	formattedDate := currentTime.Format("02-01-2006")
 
@@ -98,14 +119,19 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 		actors := v1.Group("/actors")
 		{
 			actors.POST("/", actorHandler.Create)
-			actors.GET("/", actorHandler.GetAll)
+			actors.GET("/", TokenMiddleware, actorHandler.GetAll)
 			actors.GET("/:id", actorHandler.Get)
 			actors.PUT("/:id", actorHandler.Update)
 			actors.DELETE("/:id", actorHandler.Delete)
 		}
 		films := v1.Group("/films")
 		{
-			films.GET("/", filmHandler.GetAll)
+			films.GET("/", TokenMiddleware, filmHandler.GetAll)
+		}
+		users := v1.Group("/users")
+		{
+			users.POST("/register", userHandler.Register)
+			users.POST("/login", userHandler.Login)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
