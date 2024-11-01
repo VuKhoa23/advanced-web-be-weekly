@@ -100,7 +100,7 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 		actors := v1.Group("/actors")
 		{
 			actors.POST("/", actorHandler.Create)
-			actors.GET("/", actorHandler.GetAll)
+			actors.GET("/", middleware.AuthMiddleware, actorHandler.GetAll)
 			actors.GET("/:id", actorHandler.Get)
 			actors.PUT("/:id", actorHandler.Update)
 			actors.DELETE("/:id", actorHandler.Delete)
