@@ -1,9 +1,12 @@
 package v1
 
 import (
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
+	"encoding/json"
+	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
@@ -175,6 +178,33 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 // @Router /films [get]
 // @Success 200 {object} httpcommon.HttpResponse[[]entity.Film]
 func (handler *FilmHandler) GetAll(c *gin.Context) {
-	films := handler.filmService.GetAllFilms(c.Request.Context())
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](&films))
+	url := "http://localhost:8081/api/v1/films"
+
+	resp, err := http.Get(url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
+		}))
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
+		}))
+		return
+	}
+
+	var filmsResp httpcommon.HttpResponse[[]entity.Film]
+
+	if err := json.Unmarshal(body, &filmsResp); err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
+		}))
+		return
+	}
+
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](filmsResp.Data))
 }

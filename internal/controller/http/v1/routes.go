@@ -3,14 +3,15 @@ package v1
 import (
 	"bytes"
 	"encoding/json"
+	"io"
+	"os"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"io"
-	"os"
-	"time"
 )
 
 func LoggingRequestMiddleware(c *gin.Context) {
@@ -102,6 +103,11 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 			actors.GET("/:id", actorHandler.Get)
 			actors.PUT("/:id", actorHandler.Update)
 			actors.DELETE("/:id", actorHandler.Delete)
+		}
+
+		films := v1.Group("/films")
+		{
+			films.GET("/", filmHandler.GetAll)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
