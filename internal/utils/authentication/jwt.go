@@ -3,6 +3,7 @@ package authentication
 import (
 	"fmt"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
@@ -14,7 +15,7 @@ func GenerateAccessToken(user *entity.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"username": user.Username,
-			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+			"exp":      time.Now().Add(constants.JWT_DURATION).Unix(),
 		})
 
 	tokenString, err := token.SignedString([]byte(secretKey))
