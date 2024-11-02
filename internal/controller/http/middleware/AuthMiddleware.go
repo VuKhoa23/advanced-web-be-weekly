@@ -16,7 +16,7 @@ func VerifyTokenMiddleware(c *gin.Context) {
 		return
 	}
 
-	_, err = authentication.VerifyToken(cookie.Value)
+	err = authentication.VerifyToken(cookie.Value)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,

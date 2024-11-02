@@ -6,10 +6,8 @@ import (
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 type AuthHandler struct {
@@ -37,7 +35,7 @@ func (handler *AuthHandler) Register(c *gin.Context) {
 		}))
 		return
 	}
-	c.JSON(http.StatusCreated, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: username}))
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: username}))
 }
 
 func (handler *AuthHandler) Login(c *gin.Context) {
@@ -64,13 +62,14 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
 		}))
 	}
-	//setup cookie
-	cookie := &http.Cookie{
-		Name:     "access_token",
-		Value:    tokenString,
-		HttpOnly: true,
-		Expires:  time.Now().Add(constants.COOKIE_DURATION),
-	}
-	http.SetCookie(c.Writer, cookie)
-	c.JSON(http.StatusCreated, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: user.Username}))
+
+	c.SetCookie(
+		"access_token",
+		tokenString,
+		2629800,
+		"/",
+		"",
+		false,
+		true)
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: user.Username}))
 }
