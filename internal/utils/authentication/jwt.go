@@ -8,12 +8,6 @@ import (
 	"time"
 )
 
-type Claims struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Exp      int64  `json:"exp"`
-}
-
 var secretKey = os.Getenv("JWT_SECRET_KEY")
 
 func GenerateAccessToken(user *entity.User) (string, error) {
