@@ -3,7 +3,7 @@ package v1
 import (
 	"encoding/json"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -191,7 +191,7 @@ func (handler *FilmHandler) GetAll(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
 	}
@@ -200,6 +200,5 @@ func (handler *FilmHandler) GetAll(c *gin.Context) {
 	if err := json.Unmarshal(body, &res); err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
 	}
-	films := res.Data
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[*[]entity.Film](&films))
+	c.JSON(http.StatusOK, res)
 }
