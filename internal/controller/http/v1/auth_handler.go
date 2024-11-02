@@ -6,6 +6,7 @@ import (
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -66,7 +67,7 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 	c.SetCookie(
 		"access_token",
 		tokenString,
-		2629800,
+		constants.COOKIE_DURATION,
 		"/",
 		"",
 		false,
