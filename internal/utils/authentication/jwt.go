@@ -26,6 +26,24 @@ func GenerateAccessToken(user *entity.User) (string, error) {
 	return tokenString, nil
 }
 
+var apiKey = os.Getenv("API_KEY")
+
+func GenerateTokenFromApiKey(requestUrl string, requestTime int64) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"url":  requestUrl,
+			"time": requestTime,
+		})
+
+	tokenString, err := token.SignedString([]byte(apiKey))
+
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
 func VerifyToken(tokenString string) error {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
