@@ -1,15 +1,16 @@
 package v1
 
 import (
+	"io"
+	"os"
+	"time"
+
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"io"
-	"os"
-	"time"
 )
 
 func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *FilmHandler, authHandler *AuthHandler) {
@@ -45,6 +46,7 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 		{
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
+			auth.POST("/refresh", authHandler.Refresh)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
