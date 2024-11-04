@@ -30,8 +30,29 @@ func (service *RefreshTokenService) CreateRefreshToken(ctx context.Context, refr
 	return nil
 }
 
-func (service *RefreshTokenService) FindRefreshToken(ctx context.Context, tokenValue string) (*entity.RefreshToken, error) {
-	refreshToken, err := service.refreshTokenRepository.FindRefreshToken(ctx, tokenValue)
+func (service *RefreshTokenService) UpdateRefreshToken(ctx context.Context, refreshTokenRequest model.RefreshTokenRequest) error {
+	refreshToken := &entity.RefreshToken{
+		Token: refreshTokenRequest.Token,
+		Username: refreshTokenRequest.Username,
+		ExpTime: refreshTokenRequest.ExpTime,
+	}
+	err := service.refreshTokenRepository.UpdateRefreshToken(ctx, refreshToken)
+	if err != nil {
+		return  err
+	}
+	return nil
+}
+
+func (service *RefreshTokenService) FindRefreshTokenByUsername(ctx context.Context, username string) (*entity.RefreshToken, error) {
+	refreshToken, err := service.refreshTokenRepository.FindRefreshTokenByUsername(ctx, username)
+	if err != nil {
+		return  nil, err
+	}
+	return refreshToken, nil
+}
+
+func (service *RefreshTokenService) FindRefreshTokenByValue(ctx context.Context, tokenValue string) (*entity.RefreshToken, error) {
+	refreshToken, err := service.refreshTokenRepository.FindRefreshTokenByValue(ctx, tokenValue)
 	if err != nil {
 		return  nil, err
 	}

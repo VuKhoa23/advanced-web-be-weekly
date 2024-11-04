@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -67,7 +68,8 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 	//create access token
-	accessToken, err := authentication.GenerateAccessToken(user)
+	accessTokenExpTime := time.Now().Add(constants.JWT_DURATION)
+	accessToken, err := authentication.GenerateToken(user, accessTokenExpTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
@@ -75,19 +77,31 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 	}
 
 	//create refresh token
-	refreshToken, err := authentication.GenerateRefreshToken(user)
+	refreshTokenExpTime := time.Now().Add(constants.REFRESH_TOKEN_DURATION)
+	fmt.Println("exp time ", refreshTokenExpTime)
+	refreshToken, err := authentication.GenerateToken(user, refreshTokenExpTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
 		}))
 	}
-	// save refresh token to db
+	
 	refreshTokenRequest = model.RefreshTokenRequest{
 		Token: refreshToken,
 		Username: user.Username,
-		ExpTime: time.Now().Add(constants.REFRESH_TOKEN_DURATION),
+		ExpTime: refreshTokenExpTime,
 	}
-	handler.refreshTokenService.CreateRefreshToken(c.Request.Context(), refreshTokenRequest)
+
+	// check refresh token in database to see if it exist
+	storedRefreshToken, err := handler.refreshTokenService.FindRefreshTokenByUsername(c.Request.Context(), user.Username) // find by username
+	if err != nil || storedRefreshToken == nil {
+		// save refresh token to db
+		handler.refreshTokenService.CreateRefreshToken(c.Request.Context(), refreshTokenRequest)
+	} else {
+		// if rf token exist in db, then update it base on username
+		fmt.Println("exp time ", refreshTokenExpTime)
+		handler.refreshTokenService.UpdateRefreshToken(c.Request.Context(), refreshTokenRequest)
+	}
 
 	// set access token
 	c.SetCookie(
@@ -129,7 +143,7 @@ func (handler *AuthHandler) Refresh(c *gin.Context){
 	}
 
 	// check refresh token in database to see if it exipre or exist
-	storedRefreshToken, err := handler.refreshTokenService.FindRefreshToken(c.Request.Context(), refreshToken.Value)
+	storedRefreshToken, err := handler.refreshTokenService.FindRefreshTokenByValue(c.Request.Context(), refreshToken.Value) // find by token attribute
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
@@ -137,6 +151,7 @@ func (handler *AuthHandler) Refresh(c *gin.Context){
 		return
 	}
 
+	// does not exist in db or time expired
 	if storedRefreshToken == nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: "Refresh token not found or expired", Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
@@ -159,14 +174,11 @@ func (handler *AuthHandler) Refresh(c *gin.Context){
 	}
 
 	// generate new access token
-	user, err := handler.userRepository.FindUserByUsername(c, claims["username"].(string))
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InvalidUserInfo,
-		}))
-		return
+	user := &entity.User{
+		Username: claims["username"].(string),
 	}
-	accessToken, err := authentication.GenerateAccessToken(user)
+	accessTokenExpTime := time.Now().Add(constants.JWT_DURATION)
+	accessToken, err := authentication.GenerateToken(user, accessTokenExpTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,

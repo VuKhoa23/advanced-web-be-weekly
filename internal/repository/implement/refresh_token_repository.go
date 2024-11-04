@@ -26,7 +26,14 @@ func (repo *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, refr
 	return nil
 }
 
-func (repo *RefreshTokenRepository) FindRefreshToken(ctx context.Context, tokenValue string) (*entity.RefreshToken, error) {
+func (repo *RefreshTokenRepository) UpdateRefreshToken(ctx context.Context, refreshToken *entity.RefreshToken) error {
+	if err := repo.db.WithContext(ctx).Model(&entity.RefreshToken{}).Where("username = ?", refreshToken.Username).Updates(&refreshToken).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *RefreshTokenRepository) FindRefreshTokenByValue(ctx context.Context, tokenValue string) (*entity.RefreshToken, error) {
 	var refreshToken entity.RefreshToken
 	err := repo.db.WithContext(ctx).Where("token = ?", tokenValue).First(&refreshToken).Error
 	if err != nil {
@@ -34,6 +41,15 @@ func (repo *RefreshTokenRepository) FindRefreshToken(ctx context.Context, tokenV
 	}
 	if refreshToken.ExpTime.Before(time.Now()) {
 		return nil, nil
+	}
+	return &refreshToken, nil
+}
+
+func (repo *RefreshTokenRepository) FindRefreshTokenByUsername(ctx context.Context, username string) (*entity.RefreshToken, error) {
+	var refreshToken entity.RefreshToken
+	err := repo.db.WithContext(ctx).Where("username = ?", username).First(&refreshToken).Error
+	if err != nil {
+		return nil, err
 	}
 	return &refreshToken, nil
 }
