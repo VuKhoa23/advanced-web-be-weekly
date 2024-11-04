@@ -9,7 +9,6 @@ import (
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
-	"github.com/VuKhoa23/advanced-web-be/internal/repository"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
@@ -21,12 +20,11 @@ var secretKey = os.Getenv("JWT_SECRET_KEY")
 
 type AuthHandler struct {
 	userService service.UserService
-	userRepository repository.UserRepository
 	refreshTokenService service.RefreshTokenService
 }
 
-func NewAuthHandler(userService service.UserService, userRepository repository.UserRepository, refreshTokenService service.RefreshTokenService) *AuthHandler {
-	return &AuthHandler{userService: userService, userRepository: userRepository, refreshTokenService: refreshTokenService}
+func NewAuthHandler(userService service.UserService, refreshTokenService service.RefreshTokenService) *AuthHandler {
+	return &AuthHandler{userService: userService, refreshTokenService: refreshTokenService}
 }
 
 func (handler *AuthHandler) Register(c *gin.Context) {

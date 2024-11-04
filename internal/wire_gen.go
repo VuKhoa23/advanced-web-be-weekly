@@ -29,7 +29,7 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 	userService := serviceimplement.NewUserService(userRepository)
 	refreshTokenRepository := repositoryimplement.NewRefreshTokenRepository(db)
 	refreshTokenService := serviceimplement.NewRefreshTokenService(refreshTokenRepository)
-	authHandler := v1.NewAuthHandler(userService, userRepository, refreshTokenService)
+	authHandler := v1.NewAuthHandler(userService, refreshTokenService)
 	server := http.NewServer(actorHandler, filmHandler, authHandler)
 	apiContainer := controller.NewApiContainer(server)
 	return apiContainer
