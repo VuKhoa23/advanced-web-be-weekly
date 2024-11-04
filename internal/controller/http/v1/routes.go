@@ -3,6 +3,7 @@ package v1
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/VuKhoa23/advanced-web-be/internal/controller/http/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
 	"github.com/sirupsen/logrus"
@@ -101,7 +102,7 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 			films.DELETE("/:id", filmHandler.Delete)
 			films.POST("/", filmHandler.Create)
 			films.PUT("/:id", filmHandler.Update)
-			films.GET("/", filmHandler.GetAll)
+			films.GET("/", middleware.VerifyTokenMiddleware, filmHandler.GetAll)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

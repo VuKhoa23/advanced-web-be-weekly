@@ -6,6 +6,8 @@ type errorResponseCode struct {
 	RecordNotFound      string
 	MissingIdParameter  string
 	InvalidDataType     string
+	InvalidUserInfo     string
+	Unauthorized        string
 }
 
 var ErrorResponseCode = errorResponseCode{
