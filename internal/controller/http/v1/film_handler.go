@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 	"io"
 	"net/http"
@@ -193,7 +192,7 @@ func (handler *FilmHandler) GetAll(c *gin.Context) {
 	}
 
 	// generate a token from API key to include in request
-	requestTime := time.Now().Add(constants.JWT_DURATION).Unix()
+	requestTime := time.Now().Unix()
 	token, err := authentication.GenerateTokenFromApiKey("http://localhost:3001/api/v1/films", requestTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
