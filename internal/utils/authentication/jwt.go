@@ -2,7 +2,6 @@ package authentication
 
 import (
 	"fmt"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
@@ -27,7 +26,7 @@ func GenerateTokenFromApiKey(requestUrl string, requestTime int64) (string, erro
 }
 
 func VerifyToken(tokenString string, requestUrl string, requestTime int64) error {
-	now := time.Now().Add(constants.JWT_DURATION).Unix()
+	now := time.Now().Unix()
 
 	if now-requestTime > 60 {
 		return fmt.Errorf("invalid request time")
