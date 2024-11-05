@@ -50,11 +50,3 @@ func (service *RefreshTokenService) FindRefreshTokenByUsername(ctx context.Conte
 	}
 	return refreshToken, nil
 }
-
-func (service *RefreshTokenService) FindRefreshTokenByValue(ctx context.Context, tokenValue string) (*entity.RefreshToken, error) {
-	refreshToken, err := service.refreshTokenRepository.FindRefreshTokenByValue(ctx, tokenValue)
-	if err != nil {
-		return  nil, err
-	}
-	return refreshToken, nil
-}

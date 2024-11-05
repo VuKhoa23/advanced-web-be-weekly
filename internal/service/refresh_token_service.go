@@ -11,5 +11,4 @@ type RefreshTokenService interface {
 	CreateRefreshToken(ctx context.Context, refreshTokenRequest model.RefreshTokenRequest) error
 	UpdateRefreshToken(ctx context.Context, refreshTokenRequest model.RefreshTokenRequest) error
 	FindRefreshTokenByUsername(ctx context.Context, username string) (*entity.RefreshToken, error)
-	FindRefreshTokenByValue(ctx context.Context, tokenValue string) (*entity.RefreshToken, error)
 }

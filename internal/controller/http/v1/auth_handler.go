@@ -140,8 +140,25 @@ func (handler *AuthHandler) Refresh(c *gin.Context){
 		return
 	}
 
+	// extract user info
+	claims := jwt.MapClaims{}
+	token, err := jwt.Parse(refreshToken.Value, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secretKey), nil
+	})
+	if err == nil {
+		claims = token.Claims.(jwt.MapClaims)
+	} else {
+		c.JSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
+		}))
+		return
+	}
+	user := &entity.User{
+		Username: claims["username"].(string),
+	}
+
 	// check refresh token in database to see if it exipre or exist
-	storedRefreshToken, err := handler.refreshTokenService.FindRefreshTokenByValue(c.Request.Context(), refreshToken.Value) // find by token attribute
+	storedRefreshToken, err := handler.refreshTokenService.FindRefreshTokenByUsername(c.Request.Context(), user.Username) // find by username
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
@@ -157,24 +174,7 @@ func (handler *AuthHandler) Refresh(c *gin.Context){
 		return
 	}
 
-	// extract user info
-	claims := jwt.MapClaims{}
-	token, err := jwt.Parse(refreshToken.Value, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
-	})
-	if err == nil {
-		claims = token.Claims.(jwt.MapClaims)
-	} else {
-		c.JSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
-		}))
-		return
-	}
-
 	// generate new access token
-	user := &entity.User{
-		Username: claims["username"].(string),
-	}
 	accessTokenExpTime := time.Now().Add(constants.JWT_DURATION)
 	accessToken, err := authentication.GenerateToken(user, accessTokenExpTime)
 	if err != nil {
