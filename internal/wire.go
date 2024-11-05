@@ -33,12 +33,14 @@ var serviceSet = wire.NewSet(
 	serviceimplement.NewActorService,
 	serviceimplement.NewFilmService,
 	serviceimplement.NewUserService,
+	serviceimplement.NewRefreshTokenService,
 )
 
 var repositorySet = wire.NewSet(
 	repositoryimplement.NewActorRepository,
 	repositoryimplement.NewFilmRepository,
 	repositoryimplement.NewUserRepository,
+	repositoryimplement.NewRefreshTokenRepository,
 )
 
 func InitializeContainer(

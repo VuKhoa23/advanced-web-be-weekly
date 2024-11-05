@@ -2,20 +2,20 @@ package authentication
 
 import (
 	"fmt"
-	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/constants"
-	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"time"
+
+	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var secretKey = os.Getenv("JWT_SECRET_KEY")
 
-func GenerateAccessToken(user *entity.User) (string, error) {
+func GenerateToken(user *entity.User, expTime time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"username": user.Username,
-			"exp":      time.Now().Add(constants.JWT_DURATION).Unix(),
+			"exp":      expTime.Unix(),
 		})
 
 	tokenString, err := token.SignedString([]byte(secretKey))
