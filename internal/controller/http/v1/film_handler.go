@@ -1,9 +1,14 @@
 package v1
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
+	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
@@ -175,6 +180,41 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 // @Router /films [get]
 // @Success 200 {object} httpcommon.HttpResponse[[]entity.Film]
 func (handler *FilmHandler) GetAll(c *gin.Context) {
-	films := handler.filmService.GetAllFilms(c.Request.Context())
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](&films))
+	//films := handler.filmService.GetAllFilms(c.Request.Context())
+
+	//create client and setup
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "http://localhost:3001/api/v1/films", nil)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+		return
+	}
+
+	// generate a token from API key to include in request
+	requestTime := time.Now().Unix()
+	token, err := authentication.GenerateTokenFromApiKey("http://localhost:3001/api/v1/films", requestTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+		return
+	}
+	req.Header.Set("Token", token)
+	req.Header.Set("Request-Time", fmt.Sprintf("%d", requestTime))
+
+	//call API and handler response
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	//mapping and response
+	var res httpcommon.HttpResponse[[]entity.Film]
+	if err := json.Unmarshal(body, &res); err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	c.JSON(http.StatusOK, res)
 }

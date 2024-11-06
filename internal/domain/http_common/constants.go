@@ -6,6 +6,8 @@ type errorResponseCode struct {
 	RecordNotFound      string
 	MissingIdParameter  string
 	InvalidDataType     string
+	InvalidUserInfo     string
+	Unauthorized        string
 }
 
 var ErrorResponseCode = errorResponseCode{
@@ -14,6 +16,8 @@ var ErrorResponseCode = errorResponseCode{
 	RecordNotFound:      "RECORD_NOT_FOUND",
 	MissingIdParameter:  "MISSING_ID_PARAMETER",
 	InvalidDataType:     "INVALID_DATA_TYPE",
+	InvalidUserInfo:     "INVALID_USER_INFO",
+	Unauthorized:        "UNAUTHORIZED",
 }
 
 type customValidationErrCode map[string]string

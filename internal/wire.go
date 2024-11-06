@@ -26,16 +26,21 @@ var serverSet = wire.NewSet(
 var handlerSet = wire.NewSet(
 	v1.NewActorHandler,
 	v1.NewFilmHandler,
+	v1.NewAuthHandler,
 )
 
 var serviceSet = wire.NewSet(
 	serviceimplement.NewActorService,
 	serviceimplement.NewFilmService,
+	serviceimplement.NewUserService,
+	serviceimplement.NewRefreshTokenService,
 )
 
 var repositorySet = wire.NewSet(
 	repositoryimplement.NewActorRepository,
 	repositoryimplement.NewFilmRepository,
+	repositoryimplement.NewUserRepository,
+	repositoryimplement.NewRefreshTokenRepository,
 )
 
 func InitializeContainer(

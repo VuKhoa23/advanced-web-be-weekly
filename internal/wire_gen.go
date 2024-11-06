@@ -25,7 +25,12 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 	filmRepository := repositoryimplement.NewFilmRepository(db)
 	filmService := serviceimplement.NewFilmService(filmRepository)
 	filmHandler := v1.NewFilmHandler(filmService)
-	server := http.NewServer(actorHandler, filmHandler)
+	userRepository := repositoryimplement.NewUserRepository(db)
+	userService := serviceimplement.NewUserService(userRepository)
+	refreshTokenRepository := repositoryimplement.NewRefreshTokenRepository(db)
+	refreshTokenService := serviceimplement.NewRefreshTokenService(refreshTokenRepository)
+	authHandler := v1.NewAuthHandler(userService, refreshTokenService)
+	server := http.NewServer(actorHandler, filmHandler, authHandler)
 	apiContainer := controller.NewApiContainer(server)
 	return apiContainer
 }
@@ -38,8 +43,8 @@ var container = wire.NewSet(controller.NewApiContainer)
 var serverSet = wire.NewSet(http.NewServer)
 
 // handler === controller | with service and repository layers to form 3 layers architecture
-var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler)
+var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler, v1.NewAuthHandler)
 
-var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService)
+var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService, serviceimplement.NewUserService, serviceimplement.NewRefreshTokenService)
 
-var repositorySet = wire.NewSet(repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository)
+var repositorySet = wire.NewSet(repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository, repositoryimplement.NewUserRepository, repositoryimplement.NewRefreshTokenRepository)
