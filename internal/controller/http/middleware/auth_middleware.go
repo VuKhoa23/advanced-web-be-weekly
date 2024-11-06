@@ -14,14 +14,14 @@ func VerifyTokenMiddleware(c *gin.Context) {
 	requestTime, err := strconv.ParseInt(c.Request.Header.Get("Request-Time"), 10, 64)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
+			Message: "Unauthorized", Field: "Request-Time", Code: httpcommon.ErrorResponseCode.Unauthorized,
 		}))
 		return
 	}
 	token := c.Request.Header.Get("Token")
 	if token == "" {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: "Unauthorized", Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
+			Message: "Unauthorized", Field: "Token", Code: httpcommon.ErrorResponseCode.Unauthorized,
 		}))
 		return
 	}
