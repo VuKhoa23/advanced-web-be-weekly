@@ -19,7 +19,7 @@ import (
 var secretKey = os.Getenv("JWT_SECRET_KEY")
 
 type AuthHandler struct {
-	userService service.UserService
+	userService         service.UserService
 	refreshTokenService service.RefreshTokenService
 }
 
@@ -83,11 +83,11 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
 		}))
 	}
-	
+
 	refreshTokenRequest = model.RefreshTokenRequest{
-		Token: refreshToken,
+		Token:    refreshToken,
 		Username: user.Username,
-		ExpTime: refreshTokenExpTime,
+		ExpTime:  refreshTokenExpTime,
 	}
 
 	// check refresh token in database to see if it exist
@@ -123,7 +123,7 @@ func (handler *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[entity.User](&entity.User{Username: user.Username}))
 }
 
-func (handler *AuthHandler) Refresh(c *gin.Context){
+func (handler *AuthHandler) Refresh(c *gin.Context) {
 	refreshToken, err := c.Request.Cookie("refresh_token")
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
@@ -165,11 +165,9 @@ func (handler *AuthHandler) Refresh(c *gin.Context){
 		}))
 		return
 	}
-
-	// does not exist in db or time expired
-	if storedRefreshToken == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: "Refresh token not found or expired", Field: "", Code: httpcommon.ErrorResponseCode.Unauthorized,
+	if storedRefreshToken.Token != token.Raw {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: "Unauthorized", Field: "refresh_token", Code: httpcommon.ErrorResponseCode.Unauthorized,
 		}))
 		return
 	}
