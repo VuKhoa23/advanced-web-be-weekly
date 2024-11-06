@@ -2,8 +2,6 @@ package repositoryimplement
 
 import (
 	"context"
-	"time"
-
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	"github.com/VuKhoa23/advanced-web-be/internal/repository"
@@ -39,9 +37,5 @@ func (repo *RefreshTokenRepository) FindRefreshTokenByUsername(ctx context.Conte
 	if err != nil {
 		return nil, err
 	}
-	if refreshToken.ExpTime.Before(time.Now()) {
-		return nil, nil
-	}
 	return &refreshToken, nil
 }
-
