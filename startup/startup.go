@@ -19,4 +19,5 @@ func Execute() {
 
 	container := registerDependencies()
 	container.HttpServer.Run()
+	container.GrpcServer.Run()
 }

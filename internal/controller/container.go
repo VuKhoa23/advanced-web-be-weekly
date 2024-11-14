@@ -1,11 +1,15 @@
 package controller
 
-import "github.com/VuKhoa23/advanced-web-be/internal/controller/http"
+import (
+	"github.com/VuKhoa23/advanced-web-be/internal/controller/grpc"
+	"github.com/VuKhoa23/advanced-web-be/internal/controller/http"
+)
 
 type ApiContainer struct {
 	HttpServer *http.Server
+	GrpcServer *grpc.Server
 }
 
-func NewApiContainer(httpServer *http.Server) *ApiContainer {
-	return &ApiContainer{HttpServer: httpServer}
+func NewApiContainer(httpServer *http.Server, grpcServer *grpc.Server) *ApiContainer {
+	return &ApiContainer{HttpServer: httpServer, GrpcServer: grpcServer}
 }

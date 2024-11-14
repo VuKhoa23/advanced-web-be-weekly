@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./;v1";
+
+service FilmHandler {
+  rpc GetAllFilms(Empty) returns (NewFilmResponse) {};
+}
+message Empty {}
+message NewFilmRequest {
+  string filmResquest = 1;
+}
+message NewFilmResponse {
+  string filmResponse = 2;
+}

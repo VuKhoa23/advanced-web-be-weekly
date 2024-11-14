@@ -1,7 +1,11 @@
 package v1
 
 import (
+	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/grpc/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -175,6 +179,20 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 // @Router /films [get]
 // @Success 200 {object} httpcommon.HttpResponse[[]entity.Film]
 func (handler *FilmHandler) GetAll(c *gin.Context) {
-	films := handler.filmService.GetAllFilms(c.Request.Context())
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](&films))
+	//films := handler.filmService.GetAllFilms(c.Request.Context())
+	//	//c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]entity.Film](&films))
+	address := "localhost:3001"
+	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+
+	defer conn.Close()
+	connClient := v1.NewFilmClient(conn)
+	res, err := connClient.GetAllFilms(c, &v1.Empty{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+	}
+	log.Printf("res:" + res.GetFilmResponse())
 }

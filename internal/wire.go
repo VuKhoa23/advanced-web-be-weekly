@@ -5,6 +5,7 @@ package internal
 
 import (
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
+	"github.com/VuKhoa23/advanced-web-be/internal/controller/grpc"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http"
 	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
@@ -20,6 +21,7 @@ var container = wire.NewSet(
 // may have grpc server in the future
 var serverSet = wire.NewSet(
 	http.NewServer,
+	grpc.NewServer,
 )
 
 // handler === controller | with service and repository layers to form 3 layers architecture
