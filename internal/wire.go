@@ -6,6 +6,7 @@ package internal
 import (
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/grpc"
+	filmGrpc "github.com/VuKhoa23/advanced-web-be/internal/controller/grpc/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http"
 	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
@@ -28,6 +29,7 @@ var serverSet = wire.NewSet(
 var handlerSet = wire.NewSet(
 	v1.NewActorHandler,
 	v1.NewFilmHandler,
+	filmGrpc.NewFilmHandler,
 )
 
 var serviceSet = wire.NewSet(

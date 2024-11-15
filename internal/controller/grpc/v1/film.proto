@@ -7,12 +7,24 @@ import "google/protobuf/timestamp.proto";
 option go_package = "./;v1";
 
 service FilmHandler {
-  rpc GetAllFilms(Empty) returns (NewFilmResponse) {};
+  rpc GetAllFilms(Empty) returns (ListFilmResponse) {};
 }
 message Empty {}
-message NewFilmRequest {
-  string filmResquest = 1;
+message Film {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  uint32 release_year = 4;
+  int64 language_id = 5;
+  int64 original_language_id = 6;
+  int64 rental_duration = 7;
+  double rental_rate = 8;
+  int64 length = 9;
+  double replacement_cost = 10;
+  string rating = 11;
+  string special_features = 12;
+  google.protobuf.Timestamp last_update = 13;
 }
-message NewFilmResponse {
-  string filmResponse = 2;
+message ListFilmResponse {
+  repeated Film listfilms = 14;
 }

@@ -9,6 +9,7 @@ package internal
 import (
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/grpc"
+	v1_2 "github.com/VuKhoa23/advanced-web-be/internal/controller/grpc/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
@@ -27,7 +28,8 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 	filmService := serviceimplement.NewFilmService(filmRepository)
 	filmHandler := v1.NewFilmHandler(filmService)
 	server := http.NewServer(actorHandler, filmHandler)
-	grpcServer := grpc.NewServer()
+	v1FilmHandler := v1_2.NewFilmHandler(filmService)
+	grpcServer := grpc.NewServer(v1FilmHandler)
 	apiContainer := controller.NewApiContainer(server, grpcServer)
 	return apiContainer
 }
@@ -40,7 +42,7 @@ var container = wire.NewSet(controller.NewApiContainer)
 var serverSet = wire.NewSet(http.NewServer, grpc.NewServer)
 
 // handler === controller | with service and repository layers to form 3 layers architecture
-var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler)
+var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler, v1_2.NewFilmHandler)
 
 var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService)
 

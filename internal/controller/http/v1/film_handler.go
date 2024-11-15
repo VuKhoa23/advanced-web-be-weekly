@@ -189,10 +189,15 @@ func (handler *FilmHandler) GetAll(c *gin.Context) {
 	}
 
 	defer conn.Close()
-	connClient := v1.NewFilmClient(conn)
+	connClient := v1.NewFilmHandlerClient(conn)
 	res, err := connClient.GetAllFilms(c, &v1.Empty{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
 	}
-	log.Printf("res:" + res.GetFilmResponse())
+	log.Printf(res.GetListfilms()[0].Title)
+	films := []v1.Film{}
+	for _, film := range res.GetListfilms() {
+		films = append(films, *film)
+	}
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]v1.Film](&films))
 }
