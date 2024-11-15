@@ -5,6 +5,7 @@ import (
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
+	"github.com/gammazero/workerpool"
 )
 
 func registerDependencies() *controller.ApiContainer {
@@ -14,9 +15,17 @@ func registerDependencies() *controller.ApiContainer {
 	return internal.InitializeContainer(db)
 }
 
+func startServers(container *controller.ApiContainer) {
+	wp := workerpool.New(1)
+
+	wp.Submit(container.HttpServer.Run)
+
+	wp.StopWait()
+}
+
 func Execute() {
 	validation.GetValidations()
 
 	container := registerDependencies()
-	container.HttpServer.Run()
+	startServers(container)
 }
