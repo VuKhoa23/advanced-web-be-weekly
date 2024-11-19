@@ -1,9 +1,14 @@
 package v1
 
 import (
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
@@ -102,21 +107,24 @@ func (handler *FilmHandler) Delete(c *gin.Context) {
 // @Success 200 {object} httpcommon.HttpResponse[entity.Film]
 // @Failure 400 {object} httpcommon.HttpResponse[any]
 // @Failure 500 {object} httpcommon.HttpResponse[any]
-func (handler *FilmHandler) Create(c *gin.Context) {
+func (handler *FilmHandler) Create(ctx context.Context, message []byte) error {
 	var filmRequest model.FilmRequest
 
-	if err := validation.BindJsonAndValidate(c, &filmRequest); err != nil {
-		return
+	// Deserialize Kafka message
+	if err := json.Unmarshal(message, &filmRequest); err != nil {
+		return fmt.Errorf("failed to unmarshal Kafka message: %w", err)
 	}
 
-	film, err := handler.filmService.CreateFilm(c.Request.Context(), filmRequest)
+	// Process the film creation logic
+	film, err := handler.filmService.CreateFilm(ctx, filmRequest)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
-		}))
-		return
+		return fmt.Errorf("failed to create film: %w", err)
 	}
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[entity.Film](film))
+
+	fmt.Println("film ", film)
+
+	log.Printf("Successfully created film: %v", filmRequest)
+	return nil
 }
 
 // @Summary Update a film
