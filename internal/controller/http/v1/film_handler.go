@@ -3,12 +3,13 @@ package v1
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 	"io"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
@@ -19,10 +20,14 @@ import (
 
 type FilmHandler struct {
 	filmService service.FilmService
+	kafkaProducer service.KafkaService
 }
 
-func NewFilmHandler(filmService service.FilmService) *FilmHandler {
-	return &FilmHandler{filmService: filmService}
+func NewFilmHandler(filmService service.FilmService, kafkaProducer service.KafkaService) *FilmHandler {
+	return &FilmHandler{
+		filmService: filmService,
+		kafkaProducer: kafkaProducer,
+	}
 }
 
 // @Summary Get a film
@@ -107,6 +112,7 @@ func (handler *FilmHandler) Delete(c *gin.Context) {
 // @Success 200 {object} httpcommon.HttpResponse[entity.Film]
 // @Failure 400 {object} httpcommon.HttpResponse[any]
 // @Failure 500 {object} httpcommon.HttpResponse[any]
+
 func (handler *FilmHandler) Create(c *gin.Context) {
 	var filmRequest model.FilmRequest
 
@@ -114,14 +120,25 @@ func (handler *FilmHandler) Create(c *gin.Context) {
 		return
 	}
 
-	film, err := handler.filmService.CreateFilm(c.Request.Context(), filmRequest)
+	// Serialize the film request
+	reqBody, err := json.Marshal(filmRequest)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
-			Message: err.Error(), Field: "", Code: httpcommon.ErrorResponseCode.InternalServerError,
+			Message: err.Error(), Code: httpcommon.ErrorResponseCode.InternalServerError, Field: "",
 		}))
 		return
 	}
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[entity.Film](film))
+
+	// Send request to Kafka
+	if err := handler.kafkaProducer.SendMessage("film-create", "film-key", string(reqBody)); err != nil {
+		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
+			Message: err.Error(), Code: httpcommon.ErrorResponseCode.InternalServerError, Field: "",
+		}))
+		return
+	}
+
+	message := "Film creation request sent to Kafka"
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[string](&message))
 }
 
 // @Summary Update a film
