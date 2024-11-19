@@ -1,17 +1,17 @@
 package v1
 
 import (
-	"encoding/json"
-	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/entity"
 	httpcommon "github.com/VuKhoa23/advanced-web-be/internal/domain/http_common"
 	"github.com/VuKhoa23/advanced-web-be/internal/domain/model"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
+	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 	"github.com/gin-gonic/gin"
+	v1 "github.com/hoadang0305/grpc-server-b/public/controller/grpc/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"net/http"
+	"strconv"
 )
 
 type FilmHandler struct {
@@ -177,29 +177,23 @@ func (handler *FilmHandler) Update(c *gin.Context) {
 // @Router /films [get]
 // @Success 200 {object} httpcommon.HttpResponse[[]entity.Film]
 func (handler *FilmHandler) GetAll(c *gin.Context) {
-	//films := handler.filmService.GetAllFilms(c.Request.Context())
+	address := "localhost:3001"
+	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	//create client and setup
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", "http://localhost:3001/api/v1/films", nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
 	}
-	//call API and handler response
-	resp, err := client.Do(req)
+
+	defer conn.Close()
+	connClient := v1.NewFilmHandlerClient(conn)
+	res, err := connClient.GetAllFilms(c, &v1.Empty{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
 	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
+
+	films := []v1.Film{}
+	for _, film := range res.GetListfilms() {
+		films = append(films, *film)
 	}
-	//mapping and response
-	var res httpcommon.HttpResponse[[]entity.Film]
-	if err := json.Unmarshal(body, &res); err != nil {
-		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{Message: err.Error(), Code: httpcommon.ErrorResponseCode.InvalidRequest, Field: ""}))
-	}
-	films := res.Data
-	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[*[]entity.Film](&films))
+	c.JSON(http.StatusOK, httpcommon.NewSuccessResponse[[]v1.Film](&films))
 }
