@@ -34,6 +34,9 @@ var serviceSet = wire.NewSet(
 	serviceimplement.NewFilmService,
 	serviceimplement.NewUserService,
 	serviceimplement.NewRefreshTokenService,
+
+	serviceimplement.NewKafkaService, // KafkaService here
+    wire.Value([]string{"localhost:9092"}), // Kafka brokers
 )
 
 var repositorySet = wire.NewSet(

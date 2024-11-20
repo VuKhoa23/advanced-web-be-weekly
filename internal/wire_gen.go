@@ -24,7 +24,9 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 	actorHandler := v1.NewActorHandler(actorService)
 	filmRepository := repositoryimplement.NewFilmRepository(db)
 	filmService := serviceimplement.NewFilmService(filmRepository)
-	filmHandler := v1.NewFilmHandler(filmService)
+	v := _wireValue
+	kafkaService := serviceimplement.NewKafkaService(v)
+	filmHandler := v1.NewFilmHandler(filmService, kafkaService)
 	userRepository := repositoryimplement.NewUserRepository(db)
 	userService := serviceimplement.NewUserService(userRepository)
 	refreshTokenRepository := repositoryimplement.NewRefreshTokenRepository(db)
@@ -34,6 +36,10 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 	apiContainer := controller.NewApiContainer(server)
 	return apiContainer
 }
+
+var (
+	_wireValue = []string{"localhost:9092"}
+)
 
 // wire.go:
 
@@ -45,6 +51,6 @@ var serverSet = wire.NewSet(http.NewServer)
 // handler === controller | with service and repository layers to form 3 layers architecture
 var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler, v1.NewAuthHandler)
 
-var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService, serviceimplement.NewUserService, serviceimplement.NewRefreshTokenService)
+var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService, serviceimplement.NewUserService, serviceimplement.NewRefreshTokenService, serviceimplement.NewKafkaService, wire.Value([]string{"localhost:9092"}))
 
 var repositorySet = wire.NewSet(repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository, repositoryimplement.NewUserRepository, repositoryimplement.NewRefreshTokenRepository)
