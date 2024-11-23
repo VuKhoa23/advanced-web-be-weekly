@@ -7,6 +7,7 @@
 package internal
 
 import (
+	"github.com/VuKhoa23/advanced-web-be/internal/constants"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
@@ -38,7 +39,7 @@ func InitializeContainer(db database.Db) *controller.ApiContainer {
 }
 
 var (
-	_wireValue = []string{"localhost:9092"}
+	_wireValue = []string{constants.BROKER}
 )
 
 // wire.go:
@@ -51,6 +52,6 @@ var serverSet = wire.NewSet(http.NewServer)
 // handler === controller | with service and repository layers to form 3 layers architecture
 var handlerSet = wire.NewSet(v1.NewActorHandler, v1.NewFilmHandler, v1.NewAuthHandler)
 
-var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService, serviceimplement.NewUserService, serviceimplement.NewRefreshTokenService, serviceimplement.NewKafkaService, wire.Value([]string{"localhost:9092"}))
+var serviceSet = wire.NewSet(serviceimplement.NewActorService, serviceimplement.NewFilmService, serviceimplement.NewUserService, serviceimplement.NewRefreshTokenService, serviceimplement.NewKafkaService, wire.Value([]string{constants.BROKER}))
 
 var repositorySet = wire.NewSet(repositoryimplement.NewActorRepository, repositoryimplement.NewFilmRepository, repositoryimplement.NewUserRepository, repositoryimplement.NewRefreshTokenRepository)

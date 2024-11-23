@@ -4,6 +4,7 @@
 package internal
 
 import (
+	"github.com/VuKhoa23/advanced-web-be/internal/constants"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller/http"
 	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
@@ -35,8 +36,8 @@ var serviceSet = wire.NewSet(
 	serviceimplement.NewUserService,
 	serviceimplement.NewRefreshTokenService,
 
-	serviceimplement.NewKafkaService, // KafkaService here
-    wire.Value([]string{"localhost:9092"}), // Kafka brokers
+	serviceimplement.NewKafkaService,
+    wire.Value([]string{constants.BROKER}),
 )
 
 var repositorySet = wire.NewSet(

@@ -41,6 +41,7 @@ func MapRoutes(router *gin.Engine, actorHandler *ActorHandler, filmHandler *Film
 		films := v1.Group("/films")
 		{
 			films.GET("/", middleware.VerifyTokenMiddleware, filmHandler.GetAll)
+			films.POST("/", filmHandler.Create)
 		}
 		auth := v1.Group("/auth")
 		{
