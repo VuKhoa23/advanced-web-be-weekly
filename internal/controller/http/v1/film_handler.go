@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/VuKhoa23/advanced-web-be/internal/constants"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/authentication"
 	"github.com/VuKhoa23/advanced-web-be/internal/utils/validation"
 
@@ -112,7 +113,6 @@ func (handler *FilmHandler) Delete(c *gin.Context) {
 // @Success 200 {object} httpcommon.HttpResponse[entity.Film]
 // @Failure 400 {object} httpcommon.HttpResponse[any]
 // @Failure 500 {object} httpcommon.HttpResponse[any]
-
 func (handler *FilmHandler) Create(c *gin.Context) {
 	var filmRequest model.FilmRequest
 
@@ -130,7 +130,7 @@ func (handler *FilmHandler) Create(c *gin.Context) {
 	}
 
 	// Send request to Kafka
-	if err := handler.kafkaProducer.SendMessage("film-create", "film-key", string(reqBody)); err != nil {
+	if err := handler.kafkaProducer.SendMessage(constants.TOPIC, constants.KEY, string(reqBody)); err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Code: httpcommon.ErrorResponseCode.InternalServerError, Field: "",
 		}))

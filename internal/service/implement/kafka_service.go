@@ -11,7 +11,6 @@ type KafkaService struct {
 	client sarama.SyncProducer
 }
 
-// NewProducer creates a new producer instance
 func NewKafkaService(brokers []string) service.KafkaService {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
@@ -20,7 +19,7 @@ func NewKafkaService(brokers []string) service.KafkaService {
 	producer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 		return &KafkaService{
-            client: nil,  // Return nil client if creation fails
+            client: nil, 
         }
 	}
 
@@ -46,7 +45,6 @@ func (p *KafkaService) SendMessage(topic, key, value string) error {
 	return nil
 }
 
-// Close closes the Kafka producer client
 func (p *KafkaService) Close() error {
 	return p.client.Close()
 }
