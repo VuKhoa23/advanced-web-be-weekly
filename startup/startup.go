@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/VuKhoa23/advanced-web-be/internal"
+	"github.com/VuKhoa23/advanced-web-be/internal/constants"
 	"github.com/VuKhoa23/advanced-web-be/internal/controller"
 	v1 "github.com/VuKhoa23/advanced-web-be/internal/controller/http/v1"
 	"github.com/VuKhoa23/advanced-web-be/internal/database"
@@ -29,11 +30,11 @@ func registerDependencies() *controller.ApiContainer {
     }
 
 	// Initialize Kafka Consumer Service
-	kafkaService := serviceimplement.NewKafkaService([]string{"localhost:9092"}, kafkaMessageHandler) // Replace with your broker addresses
+	kafkaService := serviceimplement.NewKafkaService([]string{constants.BROKER}, kafkaMessageHandler) // Replace with your broker addresses
 
 	// Start consuming Kafka messages
 	if kafkaService != nil {
-		topics := []string{"film-create"}
+		topics := []string{constants.TOPIC}
 		go kafkaService.Start(context.Background(), topics)
 		log.Println("Kafka consumer service started")
 	} else {

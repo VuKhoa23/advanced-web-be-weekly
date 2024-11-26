@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/IBM/sarama"
+	"github.com/VuKhoa23/advanced-web-be/internal/constants"
 	"github.com/VuKhoa23/advanced-web-be/internal/service"
 )
 
@@ -16,10 +17,8 @@ type KafkaService struct {
 
 type KafkaMessageHandler func(ctx context.Context, message []byte) error
 
-// NewKafkaConsumerService creates a new instance of the KafkaService implementation.
 func NewKafkaService(brokers []string, handler KafkaMessageHandler) service.KafkaService {
-	// Default values for groupID and handler
-	groupID := "film-key"
+	groupID := constants.KEY
 
 	config := sarama.NewConfig()
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
@@ -34,7 +33,6 @@ func NewKafkaService(brokers []string, handler KafkaMessageHandler) service.Kafk
 	return &KafkaService{consumerGroup: consumerGroup, handler: handler}
 }
 
-// Start consuming messages from the given topics
 func (kc *KafkaService) Start(ctx context.Context, topics []string) {
 	go func() {
 		for {

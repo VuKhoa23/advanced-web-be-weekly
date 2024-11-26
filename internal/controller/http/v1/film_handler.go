@@ -115,7 +115,6 @@ func (handler *FilmHandler) Create(ctx context.Context, message []byte) error {
 		return fmt.Errorf("failed to unmarshal Kafka message: %w", err)
 	}
 
-	// Process the film creation logic
 	film, err := handler.filmService.CreateFilm(ctx, filmRequest)
 	if err != nil {
 		return fmt.Errorf("failed to create film: %w", err)
