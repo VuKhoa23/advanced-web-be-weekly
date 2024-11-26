@@ -19,7 +19,6 @@ func registerDependencies() *controller.ApiContainer {
 	// Open database connection
 	db := database.Open()
 
-	// Initialize FilmService and FilmHandler
     filmRepository := repositoryimplement.NewFilmRepository(db)
     filmService := serviceimplement.NewFilmService(filmRepository)
     filmHandler := v1.NewFilmHandler(filmService)
