@@ -130,7 +130,7 @@ func (handler *FilmHandler) Create(c *gin.Context) {
 	}
 
 	// Send request to Kafka
-	if err := handler.kafkaProducer.SendMessage(constants.TOPIC, constants.KEY, string(reqBody)); err != nil {
+	if err := handler.kafkaProducer.SendMessage(constants.TOPIC, string(reqBody)); err != nil {
 		c.JSON(http.StatusInternalServerError, httpcommon.NewErrorResponse(httpcommon.Error{
 			Message: err.Error(), Code: httpcommon.ErrorResponseCode.InternalServerError, Field: "",
 		}))

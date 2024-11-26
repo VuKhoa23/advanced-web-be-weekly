@@ -29,10 +29,9 @@ func NewKafkaService(brokers []string) service.KafkaService {
 }
 
 // SendMessage sends a message to the Kafka topic with the given key and value.
-func (p *KafkaService) SendMessage(topic, key, value string) error {
+func (p *KafkaService) SendMessage(topic, value string) error {
 	msg := &sarama.ProducerMessage{
 		Topic: topic,
-		Key:   sarama.StringEncoder(key),
 		Value: sarama.StringEncoder(value),
 	}
 
