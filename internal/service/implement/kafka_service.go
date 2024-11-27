@@ -91,7 +91,6 @@ func (h *consumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 		// Send the reply back to the producer with the same correlation_id
         replyMessage := &sarama.ProducerMessage{
             Topic: constants.REPLY_TOPIC,
-            Key:   sarama.StringEncoder(constants.KEY),
             Value: sarama.StringEncoder(replyValue),
             Headers: []sarama.RecordHeader{
                 {
