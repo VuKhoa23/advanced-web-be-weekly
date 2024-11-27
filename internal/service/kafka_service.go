@@ -1,6 +1,6 @@
 package service
 
 type KafkaService interface {
-	SendMessage(topic, key, value string) (string, error)
+	SendMessage(topic, value string) (string, error)
 	Close() error
 }

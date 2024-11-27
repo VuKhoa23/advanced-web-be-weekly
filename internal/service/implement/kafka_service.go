@@ -30,11 +30,10 @@ func NewKafkaService(brokers []string) service.KafkaService {
 	}
 }
 
-func (p *KafkaService) SendMessage(topic, key, value string) (string, error) {
+func (p *KafkaService) SendMessage(topic, value string) (string, error) {
 	correlationID := constants.CORRELATION_ID
 	msg := &sarama.ProducerMessage{
 		Topic: topic,
-		Key:   sarama.StringEncoder(key),
 		Value: sarama.StringEncoder(value),
 		Headers: []sarama.RecordHeader{
             {
@@ -51,7 +50,7 @@ func (p *KafkaService) SendMessage(topic, key, value string) (string, error) {
 	}
 
 	// Wait for the reply
-    reply := waitForReply(correlationID) // Wait for the reply with the same correlation ID
+    reply := waitForReply(correlationID)
     return reply, nil
 }
 
